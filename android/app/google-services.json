@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "727769394313",
+    "firebase_url": "https://taully.firebaseio.com",
+    "project_id": "taully",
+    "storage_bucket": "taully.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727769394313:android:763260303bf7ef8d33ea58",
+        "android_client_info": {
+          "package_name": "com.taully"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "727769394313-d3ebcrmalophv2qd6kn2kso6sdgt841n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsCr8Rfy4zraZ6j0tlIqDZLnKPbxmTKBA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "727769394313-d3ebcrmalophv2qd6kn2kso6sdgt841n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
