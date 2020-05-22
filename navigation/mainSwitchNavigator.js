@@ -11,6 +11,7 @@ const MainSwitchNavigator = () => {
 
   useEffect(() => {
     auth().onAuthStateChanged(async data => {
+      console.log('data', data);
       if (data) {
         const localUser = await AsyncStorage.getItem('user');
         const localUserData = JSON.parse(localUser);
@@ -18,18 +19,28 @@ const MainSwitchNavigator = () => {
           !localUserData ||
           data.email.toLowerCase() !== localUserData.email.toLowerCase()
         ) {
-          //  Fetch all user data if no local data or the emails do not match
+           // Fetch all user data if no local data or the emails do not match
           const dbData = await firestore()
             .collection('users')
             .doc(data.uid)
             .get();
-          const {username, email, paypalEmail, photoUrl} = dbData.data();
-          const currentUser = {username, email, paypalEmail, photoUrl};
-          await AsyncStorage.setItem('user', JSON.stringify(currentUser));
-          setUser(currentUser);
+          console.log(dbData)
+          if (dbData.exists) {
+            const {username, email, paypalEmail, photoUrl} = dbData.data();
+            const currentUser = {
+              username,
+              email,
+              paypalEmail,
+              photoUrl,
+              id: data.uid,
+            };
+            await AsyncStorage.setItem('user', JSON.stringify(currentUser));
+            setUser(currentUser);
+          }
         }
         setUser({
           email: data.email,
+          id: data.uid,
         });
       } else {
         setUser(null);

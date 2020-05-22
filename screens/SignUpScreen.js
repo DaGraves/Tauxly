@@ -1,11 +1,21 @@
-import React, {useCallback, useContext, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, {useCallback, useContext, useRef, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
-import {Form, Item, Input, Button, Text} from 'native-base';
+import {Item, Input, Button, Text} from 'native-base';
 import {useNavigation} from '@react-navigation/native';
+import ImagePicker from 'react-native-image-crop-picker';
 import {StoreContext} from '../store/StoreContext';
+import ActionSheet from 'react-native-actionsheet';
+import {uuid} from 'uuidv4';
 
 const DEFAULT_STATE = {
   email: '',
@@ -15,10 +25,26 @@ const DEFAULT_STATE = {
   passwordConfirm: '',
 };
 
+const PICKER_ITEMS = ['Camera', 'Gallery', 'Cancel'];
+
+const IMAGE_OPTIONS = {
+  compressImageQuality: 0.4,
+  compressImageMaxHeight: 256,
+  compressImageMaxWidth: 256,
+  cropping: true,
+  width: 256,
+  height: 256,
+};
+
+const DEFAULT_PROFILE =
+  'https://icons-for-free.com/iconfiles/png/512/avatar+person+profile+user+icon-1320086059654790795.png';
+
 const SignUpScreen = () => {
   const navigation = useNavigation();
   const {user, setUser} = useContext(StoreContext);
+  const actionSheetRef = useRef(null);
   const [state, setState] = useState(DEFAULT_STATE);
+  const [profilePicture, setProfilePicture] = useState(null);
 
   const onChange = useCallback(
     (name, value) => {
@@ -39,30 +65,78 @@ const SignUpScreen = () => {
           password,
         );
         const {uid} = result.user;
-        const user = {
+
+        let downloadUrl = null;
+        if (profilePicture) {
+          const pictureId = uuid();
+          const storageRef = storage().ref(`users/${pictureId}`);
+          await storageRef.putFile(profilePicture);
+          downloadUrl = await storageRef.getDownloadURL();
+        }
+
+        const userData = {
           email,
           paypalEmail,
           username,
-          photoUrl:
-            'https://icons-for-free.com/iconfiles/png/512/avatar+person+profile+user+icon-1320086059654790795.png',
+          photoUrl: downloadUrl,
         };
-        const dbResult = await firestore()
+        await firestore()
           .collection('users')
           .doc(uid)
-          .set(user);
-        console.log('Result', result, dbResult);
-        setUser(user);
+          .set(userData);
+        setUser(userData);
       } catch (e) {
         console.log('ERROR', e);
       }
     } else {
       console.log('Passwords not a match');
     }
-  }, [state]);
+  }, [state, profilePicture, setUser]);
+
+  const handleSelectImage = useCallback(() => {
+    console.log(actionSheetRef);
+    actionSheetRef && actionSheetRef.current && actionSheetRef.current.show();
+  }, [actionSheetRef]);
+
+  const handleSelectImageOption = useCallback(
+    async idx => {
+      try {
+        // idx 0 is camera, 1 is gallery
+        const image =
+          idx === 0
+            ? await ImagePicker.openCamera({
+                ...IMAGE_OPTIONS,
+                useFrontCamera: true,
+              })
+            : idx === 1
+            ? await ImagePicker.openPicker(IMAGE_OPTIONS)
+            : null;
+        image && setProfilePicture(image.path);
+      } catch (e) {
+        console.log('Picker error', e);
+      }
+    },
+    [actionSheetRef],
+  );
 
   return (
-    <View>
-      <Form style={styles.formContainer}>
+    <View style={styles.container}>
+      <ScrollView style={styles.formContainer}>
+        <TouchableOpacity
+          style={styles.avatarContainer}
+          onPress={handleSelectImage}>
+          <Image
+            source={{uri: profilePicture || DEFAULT_PROFILE}}
+            style={styles.image}
+          />
+        </TouchableOpacity>
+        <ActionSheet
+          ref={actionSheetRef}
+          title={'Upload a picture from'}
+          options={PICKER_ITEMS}
+          cancelButtonIndex={2}
+          onPress={handleSelectImageOption}
+        />
         <Item>
           <Input
             autoCompleteType="email"
@@ -115,14 +189,28 @@ const SignUpScreen = () => {
           onPress={() => navigation.navigate('LogIn')}>
           <Text>I already have an account</Text>
         </Button>
-      </Form>
+      </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   formContainer: {
+    flex: 1,
     paddingHorizontal: 30,
+  },
+  avatarContainer: {
+    height: 140,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: 100,
+    height: 100,
+    borderRadius: 100,
   },
   button: {
     marginTop: 20,
