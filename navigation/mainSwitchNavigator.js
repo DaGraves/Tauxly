@@ -12,6 +12,7 @@ const MainSwitchNavigator = () => {
 
   useEffect(() => {
     auth().onAuthStateChanged(async data => {
+      console.log(data)
       if (data) {
         const localUser = await AsyncStorage.getItem('user');
         const localUserData = JSON.parse(localUser);
