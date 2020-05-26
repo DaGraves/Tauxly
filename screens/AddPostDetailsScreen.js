@@ -26,7 +26,8 @@ const AddPostDetailsScreen = props => {
         pictureId,
         downloadUrl,
         description,
-        userId: user.id,
+        userId: user && user.id,
+        username: user && user.username,
         createdAt: moment().unix(),
       };
       await firestore()
@@ -39,7 +40,7 @@ const AddPostDetailsScreen = props => {
     } catch (e) {
       console.log('Storage error', e);
     }
-  }, [params.path, description, user.id, navigation]);
+  }, [params.path, description, user.id, user.username, navigation]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

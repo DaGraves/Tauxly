@@ -65,6 +65,7 @@ const SignUpScreen = () => {
           password,
         );
         const {uid} = result.user;
+        await result.user.sendEmailVerification();
 
         let downloadUrl = null;
         if (profilePicture) {
@@ -91,7 +92,7 @@ const SignUpScreen = () => {
     } else {
       console.log('Passwords not a match');
     }
-  }, [state, profilePicture, setUser]);
+  }, [state, profilePicture]);
 
   const handleSelectImage = useCallback(() => {
     console.log(actionSheetRef);
