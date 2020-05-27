@@ -5,6 +5,7 @@ import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import {StoreContext} from '../store/StoreContext';
 import ImagePicker from 'react-native-image-crop-picker';
+import {INTERACTION_TYPES} from '../constants';
 
 const HomeScreen = props => {
   const [posts, setPosts] = useState({});
@@ -57,7 +58,7 @@ const HomeScreen = props => {
   const handleLike = useCallback(
     async post => {
       if (post) {
-        const {id, likes = []} = post;
+        const {id, likes = [], downloadUrl} = post;
         try {
           const postsCopy = {...posts};
           postsCopy[id].likes = {...postsCopy[id].likes, [user.id]: true};
@@ -71,6 +72,18 @@ const HomeScreen = props => {
               likes: {...likes, [user.id]: true},
               likeCount: increment,
             });
+          const res = await firestore()
+            .collection('interactions')
+            .add({
+              postId: id,
+              postDownloadUrl: downloadUrl,
+              creatorId: post.userId,
+              userId: user.id,
+              userName: user.username,
+              timestamp: moment().unix(),
+              type: INTERACTION_TYPES.LIKE,
+            });
+          console.log('RES', res)
         } catch (e) {
           console.log('Error Like', e);
         }

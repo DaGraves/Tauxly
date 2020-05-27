@@ -1,0 +1,6 @@
+const INTERACTION_TYPES = {
+  LIKE: 'LIKE',
+  COMMENT: 'COMMENT',
+};
+
+export {INTERACTION_TYPES};
