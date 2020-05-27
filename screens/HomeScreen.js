@@ -6,8 +6,10 @@ import firestore from '@react-native-firebase/firestore';
 import {StoreContext} from '../store/StoreContext';
 import ImagePicker from 'react-native-image-crop-picker';
 import {INTERACTION_TYPES} from '../constants';
+import {useNavigation} from '@react-navigation/native';
 
 const HomeScreen = props => {
+  const navigation = useNavigation();
   const [posts, setPosts] = useState({});
   const {user} = useContext(StoreContext);
 
@@ -72,7 +74,7 @@ const HomeScreen = props => {
               likes: {...likes, [user.id]: true},
               likeCount: increment,
             });
-          const res = await firestore()
+          await firestore()
             .collection('interactions')
             .add({
               postId: id,
@@ -83,7 +85,6 @@ const HomeScreen = props => {
               timestamp: moment().unix(),
               type: INTERACTION_TYPES.LIKE,
             });
-          console.log('RES', res)
         } catch (e) {
           console.log('Error Like', e);
         }

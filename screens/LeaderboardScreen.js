@@ -4,6 +4,7 @@ import {FeedPost} from '../components';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import {StoreContext} from '../store/StoreContext';
+import {INTERACTION_TYPES} from '../constants';
 
 const LeaderboardScreen = props => {
   const [posts, setPosts] = useState({});
@@ -49,7 +50,7 @@ const LeaderboardScreen = props => {
   const handleLike = useCallback(
     async post => {
       if (post) {
-        const {id, likes = []} = post;
+        const {id, likes = [], downloadUrl} = post;
         try {
           const postsCopy = {...posts};
           postsCopy[id].likes = {...postsCopy[id].likes, [user.id]: true};
@@ -62,6 +63,17 @@ const LeaderboardScreen = props => {
             .update({
               likes: {...likes, [user.id]: true},
               likeCount: increment,
+            });
+          await firestore()
+            .collection('interactions')
+            .add({
+              postId: id,
+              postDownloadUrl: downloadUrl,
+              creatorId: post.userId,
+              userId: user.id,
+              userName: user.username,
+              timestamp: moment().unix(),
+              type: INTERACTION_TYPES.LIKE,
             });
         } catch (e) {
           console.log('Error Like', e);

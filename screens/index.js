@@ -8,6 +8,7 @@ import AddPostDetailsScreen from './AddPostDetailsScreen';
 import HomeScreen from './HomeScreen';
 import LeaderboardScreen from './LeaderboardScreen';
 import ActivityScreen from './ActivityScreen';
+import CommentsScreen from './CommentsScreen';
 
 export {
   EmptyScreen,
@@ -19,5 +20,6 @@ export {
   AddPostDetailsScreen,
   HomeScreen,
   LeaderboardScreen,
-  ActivityScreen
+  ActivityScreen,
+  CommentsScreen,
 };

@@ -3,10 +3,12 @@ import {View, StyleSheet, Dimensions} from 'react-native';
 import ImageCustom from './ImageCustom';
 import {Text, Button} from 'native-base';
 import {StoreContext} from '../store/StoreContext';
+import {useNavigation} from '@react-navigation/native';
 
 const {width} = Dimensions.get('window');
 
 const FeedPost = props => {
+  const navigation = useNavigation();
   const {item, onLike, onUnlike} = props;
   const {user} = useContext(StoreContext);
 
@@ -14,11 +16,15 @@ const FeedPost = props => {
 
   const handleLike = useCallback(() => {
     onLike(item);
-  }, []);
+  }, [item]);
 
   const handleUnlike = useCallback(() => {
     onUnlike(item);
-  }, []);
+  }, [item]);
+
+  const handleComments = useCallback(() => {
+    navigation.navigate('Comments', item);
+  }, [item]);
 
   const isLiked = likes[user.id];
   return (
@@ -41,6 +47,9 @@ const FeedPost = props => {
       </View>
       <Button onPress={isLiked ? handleUnlike : handleLike}>
         <Text>{isLiked ? 'Unlike' : 'Like'}</Text>
+      </Button>
+      <Button onPress={handleComments}>
+        <Text>Comments</Text>
       </Button>
     </View>
   );

@@ -5,7 +5,6 @@ import ImageCustom from './ImageCustom';
 
 const ActivityItem = props => {
   const {item} = props;
-  console.log(item);
 
   return (
     <View>
