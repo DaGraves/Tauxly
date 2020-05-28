@@ -1,15 +1,12 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {FlatList, SafeAreaView, StyleSheet} from 'react-native';
-import {FeedPost} from '../components';
+import {SafeAreaView, StyleSheet} from 'react-native';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import {StoreContext} from '../store/StoreContext';
 import ImagePicker from 'react-native-image-crop-picker';
-import {INTERACTION_TYPES} from '../constants';
-import {useNavigation} from '@react-navigation/native';
+import {PictureFeed} from '../components';
 
 const HomeScreen = props => {
-  const navigation = useNavigation();
   const [posts, setPosts] = useState({});
   const {user} = useContext(StoreContext);
 
@@ -57,76 +54,9 @@ const HomeScreen = props => {
     cleanImagePicker();
   }, []);
 
-  const handleLike = useCallback(
-    async post => {
-      if (post) {
-        const {id, likes = [], downloadUrl} = post;
-        try {
-          const postsCopy = {...posts};
-          postsCopy[id].likes = {...postsCopy[id].likes, [user.id]: true};
-          postsCopy[id].likeCount = (postsCopy[id].likeCount || 0) + 1;
-          setPosts(postsCopy);
-          const increment = firestore.FieldValue.increment(1);
-          await firestore()
-            .collection('posts')
-            .doc(id)
-            .update({
-              likes: {...likes, [user.id]: true},
-              likeCount: increment,
-            });
-          await firestore()
-            .collection('interactions')
-            .add({
-              postId: id,
-              postDownloadUrl: downloadUrl,
-              creatorId: post.userId,
-              userId: user.id,
-              userName: user.username,
-              timestamp: moment().unix(),
-              type: INTERACTION_TYPES.LIKE,
-            });
-        } catch (e) {
-          console.log('Error Like', e);
-        }
-      }
-    },
-    [posts, user.id],
-  );
-
-  const handleUnlike = useCallback(
-    async post => {
-      if (post) {
-        const {id, likes = []} = post;
-        try {
-          const postsCopy = {...posts};
-          delete postsCopy[id].likes[user.id];
-          postsCopy[id].likeCount = postsCopy[id].likeCount - 1;
-          setPosts(postsCopy);
-          const increment = firestore.FieldValue.increment(-1);
-          await firestore()
-            .collection('posts')
-            .doc(id)
-            .update({
-              likes: postsCopy[id].likes,
-              likeCount: increment,
-            });
-        } catch (e) {
-          console.log('Error Like', e);
-        }
-      }
-    },
-    [posts, user.id],
-  );
-
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        keyExtractor={item => item.id}
-        data={Object.values(posts)}
-        renderItem={item => (
-          <FeedPost {...item} onLike={handleLike} onUnlike={handleUnlike} />
-        )}
-      />
+      <PictureFeed posts={posts} setPosts={setPosts} fetchPosts={fetchPosts} />
     </SafeAreaView>
   );
 };
