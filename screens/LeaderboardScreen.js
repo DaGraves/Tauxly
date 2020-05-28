@@ -1,22 +1,40 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {FlatList, SafeAreaView, StyleSheet} from 'react-native';
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 import {FeedPost} from '../components';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {StoreContext} from '../store/StoreContext';
 import {INTERACTION_TYPES} from '../constants';
 
 const LeaderboardScreen = props => {
   const [posts, setPosts] = useState({});
+  const [showDate, setShowDate] = useState(false);
+  const [leaderboardDate, setLeaderboardDate] = useState(moment().toDate());
   const {user} = useContext(StoreContext);
 
-  const fetchPosts = useCallback(async () => {
+  const selectDate = useCallback(date => {
+    setShowDate(false);
+    setLeaderboardDate(date);
+    fetchPosts(date);
+  }, []);
+
+  const fetchPosts = useCallback(async (date = new Date()) => {
     let postsData = {};
-    const startOfDay = moment()
+
+    const startOfDay = moment(date)
+      .add(-date.getTimezoneOffset(), 'minutes')
       .utc()
       .startOf('day')
       .unix();
-    const endOfDay = moment()
+    const endOfDay = moment(date)
+      .add(-date.getTimezoneOffset(), 'minutes')
       .utc()
       .endOf('day')
       .unix();
@@ -110,6 +128,21 @@ const LeaderboardScreen = props => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <DateTimePickerModal
+        isVisible={showDate}
+        mode="date"
+        value={leaderboardDate}
+        maximumDate={new Date()}
+        onConfirm={selectDate}
+        onCancel={() => {
+          setShowDate(false);
+        }}
+      />
+      <TouchableOpacity onPress={() => setShowDate(true)}>
+        <Text style={styles.dateSelectorText}>
+          {moment(leaderboardDate).format('DD MMMM YYYY')}
+        </Text>
+      </TouchableOpacity>
       <FlatList
         keyExtractor={item => item.id}
         data={Object.values(posts)}
@@ -125,6 +158,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexGrow: 1,
+  },
+  dateSelectorText: {
+    textAlign: 'center',
+    fontSize: 30,
+    color: 'blue',
   },
 });
 
