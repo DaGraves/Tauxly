@@ -3,6 +3,8 @@ import BottomTabNavigator from './bottomTabNavigator';
 import AuthStackNavigator from './authStackNavigator';
 import AddPostStackNavigator from './addPostStackNavigator';
 import HomeStackNavigator from './homeStackNavigator';
+import LeaderboardStackNavigator from './leaderboardStackNavigator';
+import ProfileStackNavigator from './profileStackNavigator';
 
 export {
   MainSwitchNavigator,
@@ -10,4 +12,6 @@ export {
   AuthStackNavigator,
   AddPostStackNavigator,
   HomeStackNavigator,
+  LeaderboardStackNavigator,
+  ProfileStackNavigator,
 };
