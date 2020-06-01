@@ -30,6 +30,10 @@ const AddPostDetailsScreen = props => {
         userId: user && user.id,
         username: user && user.username,
         createdAt: moment().unix(),
+        createdAtDay: moment()
+          .utc()
+          .startOf('day')
+          .unix(),
       };
       await firestore()
         .collection('posts')

@@ -45,9 +45,7 @@ const LeaderboardScreen = props => {
       // The subsequent dynamic fetches
       const data = await firestore()
         .collection('posts')
-        .where('createdAt', '>=', startOfDay)
-        .where('createdAt', '<=', endOfDay)
-        .orderBy('createdAt', 'desc')
+        .where('createdAtDay', '==', startOfDay)
         .orderBy('likeCount', 'desc')
         .startAfter(lastDocRef.current)
         .limit(BATCH_SIZE)
@@ -71,9 +69,7 @@ const LeaderboardScreen = props => {
       // The initial fetch
       const data = await firestore()
         .collection('posts')
-        .where('createdAt', '>=', startOfDay)
-        .where('createdAt', '<=', endOfDay)
-        .orderBy('createdAt', 'desc')
+        .where('createdAtDay', '==', startOfDay)
         .orderBy('likeCount', 'desc')
         .limit(BATCH_SIZE)
         .get();
