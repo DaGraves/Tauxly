@@ -5,7 +5,7 @@ import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-community/async-storage';
 import AuthStackNavigator from './authStackNavigator';
 import BottomTabNavigator from './bottomTabNavigator';
-import {EmailVerificationScreen, EmptyScreen} from '../screens';
+import {EmailVerificationScreen} from '../screens';
 
 const MainSwitchNavigator = () => {
   const {user, setUser} = useContext(StoreContext);

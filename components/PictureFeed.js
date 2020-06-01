@@ -1,7 +1,8 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 import {FlatList} from 'react-native';
-import {FeedPost, ListDivider} from './index';
 import {StoreContext} from '../store/StoreContext';
+import ListDivider from './ListDivider';
+import FeedPost from './FeedPost';
 
 // Receive posts in an object format
 const PictureFeed = props => {
@@ -47,7 +48,7 @@ const PictureFeed = props => {
     <FlatList
       keyExtractor={item => item.id}
       data={Object.values(posts)}
-      extraData={Object.values(extraPosts)}
+      extraData={extraPosts === false ? false : Object.values(extraPosts)}
       onRefresh={handleRefresh}
       refreshing={refreshing}
       ItemSeparatorComponent={ListDivider}

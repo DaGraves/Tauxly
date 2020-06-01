@@ -1,27 +1,31 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {
-  FlatList,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
-import {FeedPost, PictureFeed} from '../components';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {SafeAreaView, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {PictureFeed} from '../components';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import {StoreContext} from '../store/StoreContext';
-import {INTERACTION_TYPES} from '../constants';
+
+const BATCH_SIZE = 2;
 
 const LeaderboardScreen = props => {
   const [posts, setPosts] = useState({});
+  const [extraPosts, setExtraPosts] = useState({});
+  const lastDocRef = useRef(null);
   const [showDate, setShowDate] = useState(false);
   const [leaderboardDate, setLeaderboardDate] = useState(moment().toDate());
 
-  const selectDate = useCallback(date => {
-    setShowDate(false);
-    setLeaderboardDate(date);
-  }, []);
+  const selectDate = useCallback(
+    date => {
+      setShowDate(false);
+      if (date !== leaderboardDate) {
+        setExtraPosts(false);
+        setPosts({});
+        lastDocRef.current = null;
+      }
+      setLeaderboardDate(date);
+    },
+    [leaderboardDate],
+  );
 
   const fetchPosts = useCallback(async () => {
     let postsData = {};
@@ -37,29 +41,58 @@ const LeaderboardScreen = props => {
       .endOf('day')
       .unix();
 
-    const data = await firestore()
-      .collection('posts')
-      .where('createdAt', '>=', startOfDay)
-      .where('createdAt', '<=', endOfDay)
-      .orderBy('createdAt', 'desc')
-      .get();
+    if (lastDocRef.current) {
+      // The subsequent dynamic fetches
+      const data = await firestore()
+        .collection('posts')
+        .where('createdAt', '>=', startOfDay)
+        .where('createdAt', '<=', endOfDay)
+        .orderBy('createdAt', 'desc')
+        .orderBy('likeCount', 'desc')
+        .startAfter(lastDocRef.current)
+        .limit(BATCH_SIZE)
+        .get();
 
-    data.docs.forEach(docRef => {
-      const doc = docRef.data();
-      postsData = {
-        ...postsData,
-        [docRef.id]: {...doc, id: docRef.id},
-      };
-    });
+      if (!data.empty) {
+        data.docs.forEach((docRef, idx) => {
+          const doc = docRef.data();
+          postsData = {
+            ...postsData,
+            [docRef.id]: {...doc, id: docRef.id},
+          };
+          if (idx === data.docs.length - 1) {
+            lastDocRef.current = docRef;
+          }
+        });
+        setPosts({...posts, ...postsData});
+        setExtraPosts(postsData);
+      }
+    } else {
+      // The initial fetch
+      const data = await firestore()
+        .collection('posts')
+        .where('createdAt', '>=', startOfDay)
+        .where('createdAt', '<=', endOfDay)
+        .orderBy('createdAt', 'desc')
+        .orderBy('likeCount', 'desc')
+        .limit(BATCH_SIZE)
+        .get();
 
-    let sortedData = {};
-    Object.values(postsData)
-      .sort((a, b) => {
-        return (b.likeCount || 0) - (a.likeCount || 0);
-      })
-      .forEach(item => (sortedData = {...sortedData, [item.id]: item}));
-    setPosts(sortedData);
-  }, [leaderboardDate]);
+      data.docs.forEach((docRef, idx) => {
+        const doc = docRef.data();
+        postsData = {
+          ...postsData,
+          [docRef.id]: {...doc, id: docRef.id},
+        };
+        if (idx === data.docs.length - 1) {
+          lastDocRef.current = docRef;
+        }
+      });
+
+      setPosts(postsData);
+      setExtraPosts(postsData);
+    }
+  }, [leaderboardDate, posts]);
 
   useEffect(() => {
     fetchPosts();
@@ -82,7 +115,13 @@ const LeaderboardScreen = props => {
           {moment(leaderboardDate).format('DD MMMM YYYY')}
         </Text>
       </TouchableOpacity>
-      <PictureFeed posts={posts} setPosts={setPosts} fetchPosts={fetchPosts} />
+      <PictureFeed
+        posts={posts}
+        extraPosts={extraPosts}
+        setPosts={setPosts}
+        fetchPosts={fetchPosts}
+        batchSize={BATCH_SIZE}
+      />
     </SafeAreaView>
   );
 };

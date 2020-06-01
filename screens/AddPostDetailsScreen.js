@@ -26,6 +26,7 @@ const AddPostDetailsScreen = props => {
         pictureId,
         downloadUrl,
         description,
+        likeCount: 0,
         userId: user && user.id,
         username: user && user.username,
         createdAt: moment().unix(),

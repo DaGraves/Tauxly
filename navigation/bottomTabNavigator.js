@@ -1,12 +1,10 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {ActivityScreen, ProfileScreen} from '../screens';
+import {ActivityScreen} from '../screens';
 import AddPostStackNavigator from './addPostStackNavigator';
-import {
-  HomeStackNavigator,
-  LeaderboardStackNavigator,
-  ProfileStackNavigator,
-} from './index';
+import HomeStackNavigator from './homeStackNavigator';
+import LeaderboardStackNavigator from './leaderboardStackNavigator';
+import ProfileStackNavigator from './profileStackNavigator';
 
 const Tab = createBottomTabNavigator();
 
