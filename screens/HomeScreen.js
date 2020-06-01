@@ -1,4 +1,10 @@
-import React, {useCallback, useContext, useEffect, useState} from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
@@ -6,8 +12,12 @@ import {StoreContext} from '../store/StoreContext';
 import ImagePicker from 'react-native-image-crop-picker';
 import {PictureFeed} from '../components';
 
-const HomeScreen = props => {
+const BATCH_SIZE = 2;
+
+const HomeScreen = () => {
   const [posts, setPosts] = useState({});
+  const [extraPosts, setExtraPosts] = useState({});
+  const lastDocRef = useRef(null);
   const {user} = useContext(StoreContext);
 
   const fetchPosts = useCallback(async () => {
@@ -21,25 +31,58 @@ const HomeScreen = props => {
       .endOf('day')
       .unix();
 
-    const data = await firestore()
-      .collection('posts')
-      .where('createdAt', '>=', startOfDay)
-      .where('createdAt', '<=', endOfDay)
-      .orderBy('createdAt', 'desc')
-      .limit(10)
-      .get();
+    if (lastDocRef.current) {
+      // Subsequent, paginated fetches
+      const data = await firestore()
+        .collection('posts')
+        .where('createdAt', '>=', startOfDay)
+        .where('createdAt', '<=', endOfDay)
+        .orderBy('createdAt', 'desc')
+        .startAfter(lastDocRef.current)
+        .limit(BATCH_SIZE)
+        .get();
 
-    data.docs.forEach(docRef => {
-      const doc = docRef.data();
-      if (doc.userId !== user.id) {
-        postsData = {
-          ...postsData,
-          [docRef.id]: {...doc, id: docRef.id},
-        };
+      if (!data.empty) {
+        data.docs.forEach((docRef, idx) => {
+          const doc = docRef.data();
+          if (doc.userId !== user.id) {
+            postsData = {
+              ...postsData,
+              [docRef.id]: {...doc, id: docRef.id},
+            };
+          }
+          if (idx === data.docs.length - 1) {
+            lastDocRef.current = docRef;
+          }
+        });
+        setPosts({...posts, ...postsData});
+        setExtraPosts(postsData);
       }
-    });
-    setPosts(postsData);
-  }, []);
+    } else {
+      // The initial fetch
+      const data = await firestore()
+        .collection('posts')
+        .where('createdAt', '>=', startOfDay)
+        .where('createdAt', '<=', endOfDay)
+        .orderBy('createdAt', 'desc')
+        .limit(BATCH_SIZE)
+        .get();
+
+      data.docs.forEach((docRef, idx) => {
+        const doc = docRef.data();
+        if (doc.userId !== user.id) {
+          postsData = {
+            ...postsData,
+            [docRef.id]: {...doc, id: docRef.id},
+          };
+        }
+        if (idx === data.docs.length - 1) {
+          lastDocRef.current = docRef;
+        }
+      });
+      setPosts(postsData);
+    }
+  }, [posts, user.id]);
 
   const cleanImagePicker = useCallback(async () => {
     try {
@@ -56,7 +99,13 @@ const HomeScreen = props => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <PictureFeed posts={posts} setPosts={setPosts} fetchPosts={fetchPosts} />
+      <PictureFeed
+        posts={posts}
+        extraPosts={extraPosts}
+        setPosts={setPosts}
+        fetchPosts={fetchPosts}
+        batchSize={BATCH_SIZE}
+      />
     </SafeAreaView>
   );
 };

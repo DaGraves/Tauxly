@@ -5,13 +5,22 @@ import {StoreContext} from '../store/StoreContext';
 
 // Receive posts in an object format
 const PictureFeed = props => {
-  const {posts, setPosts, fetchPosts, disableLike, disableUsername} = props;
+  const {
+    posts,
+    extraPosts = {},
+    setPosts,
+    fetchPosts,
+    disableLike,
+    disableUsername,
+    batchSize = 10,
+  } = props;
   const {user} = useContext(StoreContext);
   const [refreshing, setRefreshing] = useState(false);
 
-  const handleRefresh = useCallback(() => {
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    fetchPosts();
+    await fetchPosts();
+    setRefreshing(false);
   }, [fetchPosts]);
 
   const handleLikeOptimisticUpdate = useCallback(
@@ -34,17 +43,17 @@ const PictureFeed = props => {
     [posts, setPosts, user.id],
   );
 
-  useEffect(() => {
-    setRefreshing(false);
-  }, [posts]);
-
   return (
     <FlatList
       keyExtractor={item => item.id}
       data={Object.values(posts)}
+      extraData={Object.values(extraPosts)}
       onRefresh={handleRefresh}
       refreshing={refreshing}
       ItemSeparatorComponent={ListDivider}
+      onEndReached={fetchPosts}
+      onEndReachedThreshold={0.1}
+      initialNumToRender={batchSize}
       renderItem={item => (
         <FeedPost
           {...item}
