@@ -16,7 +16,7 @@ const ActivityItem = props => {
       </Text>
       <View style={styles.imageContainer}>
         <ImageCustom
-          source={{uri: item.downloadUrl}}
+          source={{uri: item.postDownloadUrl}}
           style={styles.image}
           resizeMode="contain"
         />

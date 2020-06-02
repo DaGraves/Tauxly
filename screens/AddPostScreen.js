@@ -21,7 +21,6 @@ const AddPostScreen = props => {
   const openCamera = useCallback(async () => {
     try {
       const data = await ImagePicker.openCamera(IMAGE_OPTIONS);
-      console.log('Picker Data', data);
       goNext(data);
     } catch (e) {
       console.log('Picker Error', e);
@@ -31,7 +30,6 @@ const AddPostScreen = props => {
   const openGallery = useCallback(async () => {
     try {
       const data = await ImagePicker.openPicker(IMAGE_OPTIONS);
-      console.log('Picker Data', data);
       goNext(data);
     } catch (e) {
       console.log('Picker Error', e);

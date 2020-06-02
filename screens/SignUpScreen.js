@@ -16,6 +16,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {StoreContext} from '../store/StoreContext';
 import ActionSheet from 'react-native-actionsheet';
 import {uuid} from 'uuidv4';
+import {DEFAULT_PROFILE_PICTURE, PROFILE_IMAGE_OPTIONS} from '../constants';
 
 const DEFAULT_STATE = {
   email: '',
@@ -26,18 +27,6 @@ const DEFAULT_STATE = {
 };
 
 const PICKER_ITEMS = ['Camera', 'Gallery', 'Cancel'];
-
-const IMAGE_OPTIONS = {
-  compressImageQuality: 0.4,
-  compressImageMaxHeight: 256,
-  compressImageMaxWidth: 256,
-  cropping: true,
-  width: 256,
-  height: 256,
-};
-
-const DEFAULT_PROFILE =
-  'https://icons-for-free.com/iconfiles/png/512/avatar+person+profile+user+icon-1320086059654790795.png';
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
@@ -67,9 +56,9 @@ const SignUpScreen = () => {
         const {uid} = result.user;
         await result.user.sendEmailVerification();
 
+        const pictureId = uuid();
         let downloadUrl = null;
         if (profilePicture) {
-          const pictureId = uuid();
           const storageRef = storage().ref(`users/${pictureId}`);
           await storageRef.putFile(profilePicture);
           downloadUrl = await storageRef.getDownloadURL();
@@ -80,6 +69,7 @@ const SignUpScreen = () => {
           paypalEmail,
           username,
           photoUrl: downloadUrl,
+          photoId: downloadUrl ? pictureId : null,
         };
         await firestore()
           .collection('users')
@@ -95,7 +85,6 @@ const SignUpScreen = () => {
   }, [state, profilePicture]);
 
   const handleSelectImage = useCallback(() => {
-    console.log(actionSheetRef);
     actionSheetRef && actionSheetRef.current && actionSheetRef.current.show();
   }, [actionSheetRef]);
 
@@ -106,11 +95,11 @@ const SignUpScreen = () => {
         const image =
           idx === 0
             ? await ImagePicker.openCamera({
-                ...IMAGE_OPTIONS,
+                ...PROFILE_IMAGE_OPTIONS,
                 useFrontCamera: true,
               })
             : idx === 1
-            ? await ImagePicker.openPicker(IMAGE_OPTIONS)
+            ? await ImagePicker.openPicker(PROFILE_IMAGE_OPTIONS)
             : null;
         image && setProfilePicture(image.path);
       } catch (e) {
@@ -127,7 +116,7 @@ const SignUpScreen = () => {
           style={styles.avatarContainer}
           onPress={handleSelectImage}>
           <Image
-            source={{uri: profilePicture || DEFAULT_PROFILE}}
+            source={{uri: profilePicture || DEFAULT_PROFILE_PICTURE}}
             style={styles.image}
           />
         </TouchableOpacity>

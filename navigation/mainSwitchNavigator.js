@@ -25,12 +25,21 @@ const MainSwitchNavigator = () => {
             .doc(data.uid)
             .get();
           if (dbData.exists) {
-            const {username, email, paypalEmail, photoUrl} = dbData.data();
+            const {
+              username,
+              email,
+              paypalEmail,
+              photoUrl,
+              photoId,
+              biography,
+            } = dbData.data();
             const currentUser = {
               username,
               email,
               paypalEmail,
               photoUrl,
+              photoId,
+              biography,
               id: data.uid,
               emailVerified: data.emailVerified,
             };

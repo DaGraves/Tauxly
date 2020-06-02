@@ -6,7 +6,7 @@ const DEV_URL =
 
 const ImageCustom = props => {
   // UNCOMMENT TO SEE PRODUCTION IMAGES ON DEV
-  // __DEV__ = false;
+  __DEV__ = false;
   return (
     <Image {...props} source={{uri: __DEV__ ? DEV_URL : props.source.uri}} />
   );

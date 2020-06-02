@@ -9,6 +9,7 @@ import HomeScreen from './HomeScreen';
 import LeaderboardScreen from './LeaderboardScreen';
 import ActivityScreen from './ActivityScreen';
 import CommentsScreen from './CommentsScreen';
+import EditProfileScreen from './EditProfileScreen';
 
 export {
   EmptyScreen,
@@ -22,4 +23,5 @@ export {
   LeaderboardScreen,
   ActivityScreen,
   CommentsScreen,
+  EditProfileScreen,
 };

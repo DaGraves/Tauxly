@@ -5,25 +5,31 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {Modal, SafeAreaView, StyleSheet, View} from 'react-native';
 import {Text, Button} from 'native-base';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import ImageCustom from '../components/ImageCustom';
 import {StoreContext} from '../store/StoreContext';
 import {PictureFeed} from '../components';
+import {useNavigation} from '@react-navigation/native';
+import {DEFAULT_PROFILE_PICTURE} from '../constants';
 
 const BATCH_SIZE = 2;
 
 const ProfileScreen = props => {
+  const navigation = useNavigation();
   const {user} = useContext(StoreContext);
   const [posts, setPosts] = useState({});
   const [extraPosts, setExtraPosts] = useState({});
   const lastDocRef = useRef(null);
 
   const handleLogOut = useCallback(async () => {
-    const result = await auth().signOut();
-    console.log('Logout Result', result);
+    await auth().signOut();
+  }, []);
+
+  const handleEditProfile = useCallback(() => {
+    navigation.navigate('EditProfile');
   }, []);
 
   const fetchPosts = useCallback(async () => {
@@ -73,11 +79,17 @@ const ProfileScreen = props => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ImageCustom source={{uri: user.photoUrl}} style={styles.image} />
+      <ImageCustom
+        source={{uri: user.photoUrl || DEFAULT_PROFILE_PICTURE}}
+        style={styles.image}
+      />
       <Text>{user.email}</Text>
       <Text>{user.username}</Text>
       <Button onPress={handleLogOut}>
         <Text>Log Out</Text>
+      </Button>
+      <Button onPress={handleEditProfile}>
+        <Text>Edit Profile</Text>
       </Button>
       <View style={styles.container}>
         <PictureFeed

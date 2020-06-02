@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {FlatList, SafeAreaView, Text} from 'react-native';
+import {FlatList, SafeAreaView} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {StoreContext} from '../store/StoreContext';
 import {ActivityItem} from '../components';
@@ -30,7 +30,6 @@ const ActivityScreen = props => {
     fetchInteractions();
   }, []);
 
-  console.log(interactions);
   return (
     <SafeAreaView style={{flex: 1}}>
       <FlatList
