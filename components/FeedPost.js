@@ -106,7 +106,7 @@ const FeedPost = props => {
           <Text>@{item.username}</Text>
         </View>
       ) : null}
-      <View style={styles.imageContainer}>
+      <View style={{height: width / item.aspectRatio}}>
         <ImageCustom
           style={styles.image}
           resizeMode={'contain'}
@@ -136,10 +136,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   usernameContainer: {},
-  imageContainer: {
-    // Maximum image height should be the display's width (max square ratio)
-    height: width,
-  },
   image: {
     height: '100%',
     width: width,

@@ -34,6 +34,7 @@ const AddPostDetailsScreen = props => {
           .utc()
           .startOf('day')
           .unix(),
+        aspectRatio: params.width / params.height,
       };
       await firestore()
         .collection('posts')
@@ -45,7 +46,7 @@ const AddPostDetailsScreen = props => {
     } catch (e) {
       console.log('Storage error', e);
     }
-  }, [params.path, description, user.id, user.username, navigation]);
+  }, [params.path, params.width, params.height, description, user, navigation]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
