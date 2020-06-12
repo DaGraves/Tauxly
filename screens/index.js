@@ -10,6 +10,7 @@ import LeaderboardScreen from './LeaderboardScreen';
 import ActivityScreen from './ActivityScreen';
 import CommentsScreen from './CommentsScreen';
 import EditProfileScreen from './EditProfileScreen';
+import TermsAndConditionsScreen from './TermsAndConditionsScreen';
 
 export {
   EmptyScreen,
@@ -24,4 +25,5 @@ export {
   ActivityScreen,
   CommentsScreen,
   EditProfileScreen,
+  TermsAndConditionsScreen,
 };

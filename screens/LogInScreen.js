@@ -1,5 +1,11 @@
 import React, {useCallback, useState} from 'react';
-import {Image, SafeAreaView, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {Button, Form, Item, Text} from 'native-base';
 import {useNavigation} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
@@ -12,10 +18,16 @@ const LogInScreen = props => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = useCallback(async () => {
-    const result = await auth().signInWithEmailAndPassword(email, password);
-    console.log('Login Result', result);
+    setLoading(true);
+    try {
+      await auth().signInWithEmailAndPassword(email, password);
+    } catch (e) {
+      console.log('Login Error', e);
+    }
+    setLoading(false);
   }, [email, password]);
 
   return (
@@ -29,6 +41,9 @@ const LogInScreen = props => {
               <Item style={inputStyles.item}>
                 <Input
                   autoCompleteType="email"
+                  keyboardType="email-address"
+                  textContentType="emailAddress"
+                  autoCapitalize="none"
                   placeholder="Email"
                   value={email}
                   onChangeText={setEmail}
@@ -51,9 +66,14 @@ const LogInScreen = props => {
           <View style={styles.buttonContainer}>
             <Button
               primary
+              disabled={loading}
               style={[buttonStyles.buttonPrimary, styles.button]}
               onPress={handleLogin}>
-              <Text style={buttonStyles.buttonPrimaryText}>Log In</Text>
+              {loading ? (
+                <ActivityIndicator color={colors.white} />
+              ) : (
+                <Text style={buttonStyles.buttonPrimaryText}>Log In</Text>
+              )}
             </Button>
             <Button
               style={[buttonStyles.buttonSecondary, styles.button]}

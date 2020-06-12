@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import AuthStackNavigator from './authStackNavigator';
 import BottomTabNavigator from './bottomTabNavigator';
 import {EmailVerificationScreen} from '../screens';
+import HeaderlessStackNavigator from './headerlessStackNavigator';
 
 const MainSwitchNavigator = () => {
   const {user, setUser} = useContext(StoreContext);
@@ -62,7 +63,7 @@ const MainSwitchNavigator = () => {
   return !user ? (
     <AuthStackNavigator />
   ) : user.emailVerified ? (
-    <BottomTabNavigator />
+    <HeaderlessStackNavigator />
   ) : (
     <EmailVerificationScreen />
   );

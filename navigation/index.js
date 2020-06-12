@@ -5,6 +5,7 @@ import AddPostStackNavigator from './addPostStackNavigator';
 import HomeStackNavigator from './homeStackNavigator';
 import LeaderboardStackNavigator from './leaderboardStackNavigator';
 import ProfileStackNavigator from './profileStackNavigator';
+import HeaderlessStackNavigator from './headerlessStackNavigator';
 
 export {
   MainSwitchNavigator,
@@ -14,4 +15,5 @@ export {
   HomeStackNavigator,
   LeaderboardStackNavigator,
   ProfileStackNavigator,
+  HeaderlessStackNavigator,
 };

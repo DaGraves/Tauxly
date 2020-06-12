@@ -106,7 +106,7 @@ const FeedPost = props => {
           <Text>@{item.username}</Text>
         </View>
       ) : null}
-      <View style={{height: width / item.aspectRatio}}>
+      <View style={{height: width / (item.aspectRatio || 1)}}>
         <ImageCustom
           style={styles.image}
           resizeMode={'contain'}
