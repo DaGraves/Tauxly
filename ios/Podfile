@@ -79,10 +79,10 @@ target 'Taully' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
-  target 'TaullyTests' do
-    inherit! :complete
-    # Pods for testing
-  end
+#  target 'TaullyTests' do
+#    inherit! :complete
+#    # Pods for testing
+#  end
 
   use_native_modules!
 
@@ -99,8 +99,8 @@ end
 target 'Taully-tvOS' do
   # Pods for Taully-tvOS
 
-  target 'Taully-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
+#  target 'Taully-tvOSTests' do
+#    inherit! :search_paths
+#    # Pods for testing
+#  end
 end

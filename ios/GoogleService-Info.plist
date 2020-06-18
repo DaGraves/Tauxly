@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>727769394313-5d2dbb4jrnf3ocrhdeclkfphsls9uka4.apps.googleusercontent.com</string>
+	<string>727769394313-4nq4d82erlpm19fujmspkn13a1scrs8a.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.727769394313-5d2dbb4jrnf3ocrhdeclkfphsls9uka4</string>
+	<string>com.googleusercontent.apps.727769394313-4nq4d82erlpm19fujmspkn13a1scrs8a</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAPAQrRLyXc1hp7WPaRgHF-YmjhUL16RWY</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.reactjs.native.example.Taully</string>
+	<string>com.davidgraves.tauxlly</string>
 	<key>PROJECT_ID</key>
 	<string>taully</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:727769394313:ios:368b7a4dfc8ba81e33ea58</string>
+	<string>1:727769394313:ios:231be68fe11c3efb33ea58</string>
 	<key>DATABASE_URL</key>
 	<string>https://taully.firebaseio.com</string>
 </dict>

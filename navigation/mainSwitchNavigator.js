@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import AuthStackNavigator from './authStackNavigator';
 import BottomTabNavigator from './bottomTabNavigator';
 import {EmailVerificationScreen} from '../screens';
-import HeaderlessStackNavigator from './headerlessStackNavigator';
+import HeaderlessStackNavigator from './TablessStackNavigator';
 
 const MainSwitchNavigator = () => {
   const {user, setUser} = useContext(StoreContext);

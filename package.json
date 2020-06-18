@@ -28,6 +28,7 @@
     "react-native-actionsheet": "^2.4.2",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-get-random-values": "^1.4.0",
+    "react-native-iap": "^4.4.9",
     "react-native-image-crop-picker": "^0.31.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
     "react-native-modal-datetime-picker": "^8.7.0",
