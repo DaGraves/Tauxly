@@ -4,12 +4,45 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-community/async-storage';
 import AuthStackNavigator from './authStackNavigator';
-import BottomTabNavigator from './bottomTabNavigator';
 import {EmailVerificationScreen} from '../screens';
 import HeaderlessStackNavigator from './TablessStackNavigator';
+import RNIap from 'react-native-iap';
+import {Platform} from 'react-native';
 
 const MainSwitchNavigator = () => {
-  const {user, setUser} = useContext(StoreContext);
+  const {user, setUser, setCurrentPurchase} = useContext(StoreContext);
+
+  useEffect(() => {
+    const purchaseListener = RNIap.purchaseUpdatedListener(async purchase => {
+      try {
+        //TODO: Change on production isTest
+        const receiptBody = {'receipt-data': purchase.transactionReceipt};
+        const result = await RNIap.validateReceiptIos(receiptBody, true);
+
+        // Status 0 means valid Apple Receipt
+        if (result.status === 0) {
+          if (Platform.OS === 'ios') {
+            await RNIap.finishTransactionIOS(purchase.transactionId);
+          } else if (Platform.OS === 'android') {
+            await RNIap.consumePurchaseAndroid(purchase.purchaseToken);
+          }
+          await RNIap.finishTransaction(purchase, true);
+          setCurrentPurchase({...purchase, isComplete: true});
+        }
+      } catch (e) {
+        console.log('Error in Listener', e);
+      }
+    });
+
+    const purchaseErrorListener = RNIap.purchaseErrorListener(error => {
+      console.log('PURCHASE ERROR', error);
+    });
+
+    return () => {
+      purchaseErrorListener.remove();
+      purchaseListener.remove();
+    };
+  }, [setCurrentPurchase]);
 
   useEffect(() => {
     auth().onAuthStateChanged(async data => {

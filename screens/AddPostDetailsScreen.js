@@ -1,12 +1,12 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {Image, View, StyleSheet, Platform, Dimensions} from 'react-native';
+import {Image, View, StyleSheet, Dimensions} from 'react-native';
 import {Item, Button, Text} from 'native-base';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
-import {useNavigation, StackActions} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {uuid} from 'uuidv4';
 import moment from 'moment';
-import {Input} from '../components';
+import {Input, LoadingOverlay} from '../components';
 import {StoreContext} from '../store/StoreContext';
 import {colors} from '../styles/common';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
@@ -20,15 +20,15 @@ const AddPostDetailsScreen = props => {
   const {
     route: {params},
   } = props;
-  const {user} = useContext(StoreContext);
+  const {user, currentPurchase, setCurrentPurchase} = useContext(StoreContext);
   const navigation = useNavigation();
   const [description, setDescription] = useState('');
   const [iap, setIap] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const prepareIAP = useCallback(async () => {
     try {
       const products = await RNIap.getProducts([IAP_SKU]);
-      console.log(products)
       const photoSubIAP = products.find(item => item.productId === IAP_SKU);
       setIap(photoSubIAP);
     } catch (err) {
@@ -40,42 +40,86 @@ const AddPostDetailsScreen = props => {
     prepareIAP();
   }, []);
 
+  const logPurchase = useCallback(
+    async purchase => {
+      try {
+        firestore()
+          .collection('purchases')
+          .add({
+            userId: user.id,
+            ...purchase,
+            createdAt: moment().unix(),
+          });
+      } catch (e) {
+        console.log('Purchase log error', e);
+      }
+    },
+    [user.id],
+  );
+
+  const uploadPost = useCallback(async () => {
+    const pictureId = uuid();
+    const storageRef = storage().ref(`posts/${pictureId}`);
+    await storageRef.putFile(params.path);
+    const downloadUrl = await storageRef.getDownloadURL();
+    const dbData = {
+      pictureId,
+      downloadUrl,
+      description,
+      likeCount: 0,
+      userId: user && user.id,
+      username: user && user.username,
+      createdAt: moment().unix(),
+      createdAtDay: moment()
+        .utc()
+        .startOf('day')
+        .unix(),
+      aspectRatio: params.width / params.height,
+    };
+    await firestore()
+      .collection('posts')
+      .add(dbData);
+
+    setIsLoading(false);
+    setCurrentPurchase({});
+    navigation.goBack();
+  }, [
+    description,
+    navigation,
+    params.height,
+    params.path,
+    params.width,
+    setCurrentPurchase,
+    user,
+  ]);
+
+  useEffect(() => {
+    console.log('<<<<<', currentPurchase.isComplete, currentPurchase.isLogged);
+    if (
+      currentPurchase &&
+      currentPurchase.isComplete &&
+      !currentPurchase.isLogged
+    ) {
+      setCurrentPurchase({...currentPurchase, isLogged: true});
+      logPurchase(currentPurchase);
+      uploadPost();
+    }
+  }, [currentPurchase.isComplete]);
+
   const handleSubmit = useCallback(async () => {
+    setIsLoading(true);
     try {
       const purchase = await RNIap.requestPurchase(IAP_SKU);
-      console.log('in-component purchase', purchase);
-      // const pictureId = uuid();
-      // const storageRef = storage().ref(`posts/${pictureId}`);
-      // await storageRef.putFile(params.path);
-      // const downloadUrl = await storageRef.getDownloadURL();
-      // const dbData = {
-      //   pictureId,
-      //   downloadUrl,
-      //   description,
-      //   likeCount: 0,
-      //   userId: user && user.id,
-      //   username: user && user.username,
-      //   createdAt: moment().unix(),
-      //   createdAtDay: moment()
-      //     .utc()
-      //     .startOf('day')
-      //     .unix(),
-      //   aspectRatio: params.width / params.height,
-      // };
-      // await firestore()
-      //   .collection('posts')
-      //   .add(dbData);
-      //
-      // const resetStack = StackActions.pop(1);
-      // navigation.dispatch(resetStack);
-      // navigation.navigate('Home');
+      setCurrentPurchase({purchase, isComplete: false});
     } catch (e) {
       console.log('Storage error', e);
     }
-  }, [params.path, params.width, params.height, description, user, navigation]);
+  }, [setCurrentPurchase]);
 
+  console.log('LOADING', isLoading);
   return (
     <View style={styles.mainContainer}>
+      {isLoading ? <LoadingOverlay /> : null}
       <KeyboardAwareScrollView
         style={styles.container}
         contentContainerStyle={styles.container}>
@@ -107,6 +151,7 @@ const AddPostDetailsScreen = props => {
       </KeyboardAwareScrollView>
       <View style={styles.buttonContainer}>
         <Button
+          disabled={!(iap && iap.localizedPrice)}
           style={[buttonStyles.buttonPrimary, styles.button]}
           onPress={handleSubmit}>
           <Text style={buttonStyles.buttonPrimaryText}>Submit</Text>

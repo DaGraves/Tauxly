@@ -6,6 +6,7 @@ import CommentItem from './CommentItem';
 import PictureFeed from './PictureFeed';
 import ListDivider from './ListDivider';
 import GradientBackground from './GradientBackground';
+import LoadingOverlay from './LoadingOverlay';
 
 export {
   Image,
@@ -16,4 +17,5 @@ export {
   PictureFeed,
   ListDivider,
   GradientBackground,
+  LoadingOverlay,
 };
