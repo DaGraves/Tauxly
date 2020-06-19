@@ -116,7 +116,6 @@ const AddPostDetailsScreen = props => {
     }
   }, [setCurrentPurchase]);
 
-  console.log('LOADING', isLoading);
   return (
     <View style={styles.mainContainer}>
       {isLoading ? <LoadingOverlay /> : null}
