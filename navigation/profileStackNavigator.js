@@ -7,7 +7,11 @@ const Stack = createStackNavigator();
 const ProfileStackNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{header: () => null}}
+      />
       <Stack.Screen name="Comments" component={CommentsScreen} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
     </Stack.Navigator>

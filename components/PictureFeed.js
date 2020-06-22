@@ -3,6 +3,7 @@ import {FlatList} from 'react-native';
 import {StoreContext} from '../store/StoreContext';
 import ListDivider from './ListDivider';
 import FeedPost from './FeedPost';
+import FeedPostSplit from './FeedPostSplit';
 
 // Receive posts in an object format
 const PictureFeed = props => {
@@ -14,6 +15,8 @@ const PictureFeed = props => {
     disableLike,
     disableUsername,
     batchSize = 10,
+    isSplit = false,
+    onPostPress,
   } = props;
   const {user} = useContext(StoreContext);
   const [refreshing, setRefreshing] = useState(false);
@@ -47,6 +50,7 @@ const PictureFeed = props => {
   return (
     <FlatList
       keyExtractor={item => item.id}
+      contentContainerStyle={{flex: 1}}
       data={Object.values(posts)}
       extraData={extraPosts === false ? false : Object.values(extraPosts)}
       onRefresh={handleRefresh}
@@ -55,15 +59,20 @@ const PictureFeed = props => {
       onEndReached={fetchPosts}
       onEndReachedThreshold={0.1}
       initialNumToRender={batchSize}
-      renderItem={item => (
-        <FeedPost
-          {...item}
-          onLikeOptimisticUpdate={handleLikeOptimisticUpdate}
-          onUnlikeOptimisticUpdate={handleUnlikeOptimisticUpdate}
-          disableLike={disableLike}
-          disableUsername={disableUsername}
-        />
-      )}
+      numColumns={isSplit ? 2 : 1}
+      renderItem={item =>
+        isSplit ? (
+          <FeedPostSplit {...item} onPress={onPostPress} />
+        ) : (
+          <FeedPost
+            {...item}
+            onLikeOptimisticUpdate={handleLikeOptimisticUpdate}
+            onUnlikeOptimisticUpdate={handleUnlikeOptimisticUpdate}
+            disableLike={disableLike}
+            disableUsername={disableUsername}
+          />
+        )
+      }
     />
   );
 };

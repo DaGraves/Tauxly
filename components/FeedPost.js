@@ -61,9 +61,7 @@ const FeedPost = props => {
           onUnlikeOptimisticUpdate(id);
         }
         const increment = firestore.FieldValue.increment(-1);
-        console.log(item);
         delete item.likes[user.id];
-        console.log(item);
         await firestore()
           .collection('posts')
           .doc(id)

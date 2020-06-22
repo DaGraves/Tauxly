@@ -1,6 +1,7 @@
 import Image from './ImageCustom';
 import Input from './InputCustom';
 import FeedPost from './FeedPost';
+import FeedPostSplit from './FeedPostSplit';
 import ActivityItem from './ActivityItem';
 import CommentItem from './CommentItem';
 import PictureFeed from './PictureFeed';
@@ -12,6 +13,7 @@ export {
   Image,
   Input,
   FeedPost,
+  FeedPostSplit,
   ActivityItem,
   CommentItem,
   PictureFeed,

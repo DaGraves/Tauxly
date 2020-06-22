@@ -5,15 +5,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {Modal, SafeAreaView, StyleSheet, View} from 'react-native';
-import {Text, Button} from 'native-base';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import ImageCustom from '../components/ImageCustom';
 import {StoreContext} from '../store/StoreContext';
-import {PictureFeed} from '../components';
 import {useNavigation} from '@react-navigation/native';
-import {DEFAULT_PROFILE_PICTURE} from '../constants';
+import Profile from '../components/Profile';
+import {colors} from '../styles/common';
 
 const BATCH_SIZE = 2;
 
@@ -78,42 +76,26 @@ const ProfileScreen = props => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ImageCustom
-        source={{uri: user.photoUrl || DEFAULT_PROFILE_PICTURE}}
-        style={styles.image}
-      />
-      <Text>{user.email}</Text>
-      <Text>{user.username}</Text>
-      <Button onPress={handleLogOut}>
-        <Text>Log Out</Text>
-      </Button>
-      <Button onPress={handleEditProfile}>
-        <Text>Edit Profile</Text>
-      </Button>
-      <View style={styles.container}>
-        <PictureFeed
+    <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        <Profile
+          handleLogOut={handleLogOut}
+          handleEditProfile={handleEditProfile}
           posts={posts}
           extraPosts={extraPosts}
           setPosts={setPosts}
           fetchPosts={fetchPosts}
-          disableLike
-          disableUsername
           batchSize={BATCH_SIZE}
         />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  image: {
-    height: 100,
-    width: 100,
-    borderRadius: 100,
-  },
   container: {
     flex: 1,
+    backgroundColor: colors.black,
   },
 });
 
