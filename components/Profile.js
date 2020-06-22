@@ -2,8 +2,7 @@ import React, {useContext, useRef} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import ImageCustom from './ImageCustom';
 import {DEFAULT_PROFILE_PICTURE} from '../constants';
-import {Button} from 'native-base';
-import {PictureFeed} from './index';
+import {ListDivider, PictureFeed} from './index';
 import {StoreContext} from '../store/StoreContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -18,8 +17,11 @@ const Profile = ({
   setPosts,
   fetchPosts,
   batchSize,
+  otherUser,
 }) => {
-  const {user} = useContext(StoreContext);
+  const myUser = useContext(StoreContext).user;
+  const user = otherUser || myUser;
+
   const actionSheetRef = useRef(null);
 
   const handleMenuPress = idx => {
@@ -38,31 +40,38 @@ const Profile = ({
         onPress={handleMenuPress}
       />
       <View style={styles.header}>
-        <ImageCustom
-          source={{uri: user.photoUrl || DEFAULT_PROFILE_PICTURE}}
-          style={styles.image}
-        />
+        <View>
+          <ImageCustom
+            source={{uri: user.photoUrl || DEFAULT_PROFILE_PICTURE}}
+            style={styles.image}
+          />
+        </View>
         <View style={styles.headerRight}>
           <View style={styles.usernameContainer}>
             <Text style={styles.username}>@{user.username}</Text>
-            <TouchableOpacity onPress={() => actionSheetRef.current.show()}>
-              <CommunityIcon
-                name="dots-vertical"
-                size={24}
-                color={colors.lightGrey}
-              />
-            </TouchableOpacity>
+            {!otherUser && (
+              <TouchableOpacity onPress={() => actionSheetRef.current.show()}>
+                <CommunityIcon
+                  name="dots-vertical"
+                  size={24}
+                  color={colors.lightGrey}
+                />
+              </TouchableOpacity>
+            )}
           </View>
-          <Text numberOfLines={2} lineBreakMode={'tail'} style={styles.bio}>
-            {user.biography} ahsjdfg asjhd gfjhas gdfhkasg fhkags dfhaks
-            ddagkfhkadgs fkasdfjk sdhfjkg shdfg khsdfg dsfj ghsdjklffffffffghsg
-            sdfhjg k
+          <Text
+            numberOfLines={otherUser ? 4 : 2}
+            lineBreakMode={'tail'}
+            style={styles.bio}>
+            {user.biography}
           </Text>
           <TouchableOpacity
             style={styles.editProfile}
             onPress={handleEditProfile}>
-            <Icon name="edit" color={colors.lightGrey} size={14} />
-            <Text style={styles.edit}>Edit profile...</Text>
+            {!otherUser && (
+              <Icon name="edit" color={colors.lightGrey} size={14} />
+            )}
+            {!otherUser && <Text style={styles.edit}>Edit profile...</Text>}
           </TouchableOpacity>
         </View>
       </View>
@@ -85,7 +94,7 @@ const Profile = ({
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
-    marginVertical: 10,
+    marginTop: 10,
   },
   headerRight: {
     flex: 1,

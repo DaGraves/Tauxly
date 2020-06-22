@@ -1,6 +1,10 @@
 import React, {useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {AddPostDetailsScreen, TermsAndConditionsScreen} from '../screens';
+import {
+  AddPostDetailsScreen,
+  TermsAndConditionsScreen,
+  OtherProfileScreen,
+} from '../screens';
 import BottomTabNavigator from './bottomTabNavigator';
 import {colors} from '../styles/common';
 import RNIap from 'react-native-iap';
@@ -41,6 +45,11 @@ const TablessStackNavigator = props => {
         name="AddPostDetails"
         component={AddPostDetailsScreen}
         options={{title: 'Final details', headerBackTitle: 'Back'}}
+      />
+      <Stack.Screen
+        name="OtherProfile"
+        component={OtherProfileScreen}
+        options={{title: 'Profile', headerBackTitle: 'Back'}}
       />
     </Stack.Navigator>
   );

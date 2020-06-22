@@ -1,5 +1,5 @@
 import React, {useCallback, useContext} from 'react';
-import {View, StyleSheet, Dimensions} from 'react-native';
+import {View, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
 import ImageCustom from './ImageCustom';
 import {Text, Button} from 'native-base';
 import {StoreContext} from '../store/StoreContext';
@@ -100,9 +100,13 @@ const FeedPost = props => {
   return (
     <View style={styles.container}>
       {!disableUsername ? (
-        <View style={styles.usernameContainer}>
+        <TouchableOpacity
+          style={styles.usernameContainer}
+          onPress={() =>
+            navigation.navigate('OtherProfile', {userId: item.userId})
+          }>
           <Text>@{item.username}</Text>
-        </View>
+        </TouchableOpacity>
       ) : null}
       <View style={{height: width / (item.aspectRatio || 1)}}>
         <ImageCustom
@@ -131,7 +135,7 @@ const FeedPost = props => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
   },
   usernameContainer: {},
   image: {

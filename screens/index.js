@@ -3,6 +3,7 @@ import SignUpScreen from './SignUpScreen';
 import EmailVerificationScreen from './EmailVerificationScreen';
 import LogInScreen from './LogInScreen';
 import ProfileScreen from './ProfileScreen';
+import OtherProfileScreen from './OtherProfileScreen';
 import AddPostScreen from './AddPostScreen';
 import AddPostDetailsScreen from './AddPostDetailsScreen';
 import HomeScreen from './HomeScreen';
@@ -26,4 +27,5 @@ export {
   CommentsScreen,
   EditProfileScreen,
   TermsAndConditionsScreen,
+  OtherProfileScreen,
 };

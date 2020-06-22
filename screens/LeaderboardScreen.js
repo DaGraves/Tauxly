@@ -12,7 +12,11 @@ const LeaderboardScreen = props => {
   const [extraPosts, setExtraPosts] = useState({});
   const lastDocRef = useRef(null);
   const [showDate, setShowDate] = useState(false);
-  const [leaderboardDate, setLeaderboardDate] = useState(moment().toDate());
+  const [leaderboardDate, setLeaderboardDate] = useState(
+    moment()
+      .subtract(3, 'days')
+      .toDate(),
+  );
 
   const selectDate = useCallback(
     date => {

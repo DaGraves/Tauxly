@@ -3,8 +3,7 @@ const INTERACTION_TYPES = {
   COMMENT: 'COMMENT',
 };
 
-const DEFAULT_PROFILE_PICTURE =
-  'https://icons-for-free.com/iconfiles/png/512/avatar+person+profile+user+icon-1320086059654790795.png';
+const DEFAULT_PROFILE_PICTURE = 'default_profile';
 
 const PROFILE_IMAGE_OPTIONS = {
   compressImageQuality: 0.4,
