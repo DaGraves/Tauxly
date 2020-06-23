@@ -66,6 +66,9 @@ const MainSwitchNavigator = () => {
               photoUrl,
               photoId,
               biography,
+              facebook,
+              twitter,
+              instagram,
             } = dbData.data();
             const currentUser = {
               username,
@@ -74,6 +77,9 @@ const MainSwitchNavigator = () => {
               photoUrl,
               photoId,
               biography,
+              facebook,
+              twitter,
+              instagram,
               id: data.uid,
               emailVerified: data.emailVerified,
             };

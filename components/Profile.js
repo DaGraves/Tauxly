@@ -1,8 +1,16 @@
 import React, {useContext, useRef} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  Linking,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Clipboard,
+} from 'react-native';
+import {Toast} from 'native-base';
 import ImageCustom from './ImageCustom';
 import {DEFAULT_PROFILE_PICTURE} from '../constants';
-import {ListDivider, PictureFeed} from './index';
+import {PictureFeed} from './index';
 import {StoreContext} from '../store/StoreContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -30,6 +38,26 @@ const Profile = ({
     }
   };
 
+  const handleSocialPress = async (name, val) => {
+    try {
+      if (name === 'instagram') {
+        await Linking.openURL(`instagram://user?username=${val}`);
+      } else if (name === 'twitter') {
+        await Linking.openURL(`twitter://user?id=${val}`);
+      } else if (name === 'facebook') {
+        await Linking.openURL(`fb://profile/${val}`);
+      }
+    } catch (e) {
+      Clipboard.setString(val);
+      Toast.show({
+        text: `Copied ${val}`,
+        buttonText: 'OK',
+        duration: 3000,
+        position: 'bottom',
+      });
+    }
+  };
+
   return (
     <>
       <ActionSheet
@@ -45,6 +73,52 @@ const Profile = ({
             source={{uri: user.photoUrl || DEFAULT_PROFILE_PICTURE}}
             style={styles.image}
           />
+          {otherUser &&
+            (otherUser.facebook ||
+              otherUser.instagram ||
+              otherUser.twitter) && (
+              <View>
+                <View style={styles.divider} />
+                <View style={styles.socialContainer}>
+                  {otherUser.facebook ? (
+                    <TouchableOpacity
+                      onPress={() =>
+                        handleSocialPress('facebook', otherUser.facebook)
+                      }>
+                      <CommunityIcon
+                        name="facebook"
+                        color={colors.white}
+                        size={24}
+                      />
+                    </TouchableOpacity>
+                  ) : null}
+                  {otherUser.instagram ? (
+                    <TouchableOpacity
+                      onPress={() =>
+                        handleSocialPress('instagram', otherUser.instagram)
+                      }>
+                      <CommunityIcon
+                        name="instagram"
+                        color={colors.white}
+                        size={24}
+                      />
+                    </TouchableOpacity>
+                  ) : null}
+                  {otherUser.twitter ? (
+                    <TouchableOpacity
+                      onPress={() =>
+                        handleSocialPress('twitter', otherUser.twitter)
+                      }>
+                      <CommunityIcon
+                        name="twitter"
+                        color={colors.white}
+                        size={24}
+                      />
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              </View>
+            )}
         </View>
         <View style={styles.headerRight}>
           <View style={styles.usernameContainer}>
@@ -133,6 +207,17 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 10,
     paddingTop: 20,
+  },
+  divider: {
+    width: '90%',
+    alignSelf: 'center',
+    backgroundColor: colors.white,
+    height: 1,
+    marginVertical: 4,
+  },
+  socialContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
   },
 });
 

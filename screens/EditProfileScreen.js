@@ -1,21 +1,19 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import {ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {useCallback, useContext, useRef, useState} from 'react';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {StoreContext} from '../store/StoreContext';
-import {Form, Item, Label, Input, Textarea, Button, Text} from 'native-base';
+import {Form, Item, Textarea, Button, Text} from 'native-base';
 import {DEFAULT_PROFILE_PICTURE, PROFILE_IMAGE_OPTIONS} from '../constants';
 import ActionSheet from 'react-native-actionsheet';
 import ImagePicker from 'react-native-image-crop-picker';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import ImageCustom from '../components/ImageCustom';
+import {Image, Input} from '../components';
 import {uuid} from 'uuidv4';
 import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {colors} from '../styles/common';
+import {buttonStyles, inputStyles} from '../styles';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const PICKER_ITEMS = ['Camera', 'Gallery', 'Cancel'];
 
@@ -25,6 +23,9 @@ const EditProfileScreen = props => {
   const actionSheetRef = useRef(null);
   const [paypal, setPaypal] = useState(user.paypalEmail || '');
   const [bio, setBio] = useState(user.biography || '');
+  const [instagram, setInstagram] = useState(user.instagram || '');
+  const [twitter, setTwitter] = useState(user.twitter || '');
+  const [facebook, setFacebook] = useState(user.facebook || '');
   const [photoUrl, setPhotoUrl] = useState(user.photoUrl || null);
 
   const handleChangePicture = useCallback(() => {
@@ -57,6 +58,9 @@ const EditProfileScreen = props => {
       let updateObject = {
         biography: bio,
         paypalEmail: paypal,
+        facebook,
+        twitter,
+        instagram,
       };
 
       // Upload the new picture to storage if it has changed
@@ -90,68 +94,167 @@ const EditProfileScreen = props => {
     } catch (e) {
       console.log('Error', e);
     }
-  }, [bio, paypal, photoUrl, setUser, user]);
+  }, [
+    bio,
+    facebook,
+    instagram,
+    navigation,
+    paypal,
+    photoUrl,
+    setUser,
+    twitter,
+    user,
+  ]);
 
   const handleCancel = useCallback(() => {
     navigation.goBack();
   }, []);
 
   return (
-    <ScrollView>
-      <TouchableOpacity
-        style={styles.imageContainer}
-        onPress={handleChangePicture}>
-        <ImageCustom
-          source={{uri: photoUrl || DEFAULT_PROFILE_PICTURE}}
-          style={styles.image}
+    <View style={styles.baseline}>
+      <KeyboardAwareScrollView>
+        <View style={styles.imageContainer}>
+          <TouchableOpacity
+            style={styles.imageContainer}
+            onPress={handleChangePicture}>
+            <Image
+              source={{uri: photoUrl || DEFAULT_PROFILE_PICTURE}}
+              style={styles.image}
+            />
+            <View style={styles.editTextContainer}>
+              <Icon name="edit" size={14} color={colors.lightGrey} />
+              <Text style={styles.editText}>Change Profile Picture</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <Form style={styles.formContainer}>
+          <Item style={[inputStyles.item]}>
+            <Input
+              autoCompleteType="email"
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              autoCapitalize="none"
+              placeholder="PayPal Email"
+              value={paypal}
+              onChangeText={setPaypal}
+              iconName="attach-money"
+              maxLength={100}
+            />
+          </Item>
+          <Item style={[inputStyles.item, , styles.bioInput]}>
+            <Input
+              autoCapitalize="none"
+              placeholder="Biography"
+              value={bio}
+              onChangeText={setBio}
+              multiline={true}
+              numberOfLines={4}
+              maxLength={250}
+            />
+          </Item>
+          <Item style={[inputStyles.item]}>
+            <Input
+              autoCapitalize="none"
+              placeholder="Instagram Username"
+              value={instagram}
+              onChangeText={setInstagram}
+              iconName="instagram"
+              isCommunityIcon
+              maxLength={100}
+            />
+          </Item>
+          <Item style={[inputStyles.item]}>
+            <Input
+              autoCapitalize="none"
+              placeholder="Twitter Username"
+              value={twitter}
+              onChangeText={setTwitter}
+              iconName="twitter"
+              isCommunityIcon
+              maxLength={100}
+            />
+          </Item>
+          <Item style={[inputStyles.item]}>
+            <Input
+              autoCapitalize="none"
+              placeholder="Facebook Page ID"
+              value={facebook}
+              onChangeText={setFacebook}
+              iconName="facebook"
+              isCommunityIcon
+              maxLength={100}
+            />
+          </Item>
+        </Form>
+        <View style={styles.buttonContainer}>
+          <Button
+            style={[buttonStyles.buttonPrimary, styles.button]}
+            onPress={handleSave}>
+            <Text style={buttonStyles.buttonPrimaryText}>Save</Text>
+          </Button>
+          <Button
+            style={[buttonStyles.buttonSecondary, styles.button]}
+            onPress={handleCancel}>
+            <Icon name="arrow-back" color={colors.white} size={22} />
+            <Text>Go Back</Text>
+          </Button>
+        </View>
+        <ActionSheet
+          ref={actionSheetRef}
+          title={'Upload a picture from'}
+          options={PICKER_ITEMS}
+          cancelButtonIndex={2}
+          onPress={handleSelectImageOption}
         />
-      </TouchableOpacity>
-      <ActionSheet
-        ref={actionSheetRef}
-        title={'Upload a picture from'}
-        options={PICKER_ITEMS}
-        cancelButtonIndex={2}
-        onPress={handleSelectImageOption}
-      />
-      <Form>
-        <Item>
-          <Label>PayPal Email</Label>
-          <Input value={paypal || ''} onChangeText={setPaypal} />
-        </Item>
-        <Item>
-          <Label>Bio</Label>
-          <Textarea
-            value={bio || ''}
-            style={styles.container}
-            rowSpan={4}
-            bordered={false}
-            underline={false}
-            onChangeText={setBio}
-          />
-        </Item>
-      </Form>
-      <Button onPress={handleSave}>
-        <Text>Save</Text>
-      </Button>
-      <Button onPress={handleCancel}>
-        <Text>Cancel</Text>
-      </Button>
-    </ScrollView>
+      </KeyboardAwareScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  baseline: {
+    flex: 1,
+    backgroundColor: colors.black,
+  },
   container: {
     flex: 1,
   },
   imageContainer: {
     alignItems: 'center',
-    marginVertical: 30,
+    marginTop: 10,
   },
   image: {
-    height: 100,
-    width: 100,
-    borderRadius: 100,
+    height: 120,
+    width: 120,
+    borderRadius: 120,
+  },
+  editTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  editText: {
+    fontSize: 14,
+    color: colors.lightGrey,
+    marginLeft: 2,
+  },
+  formContainer: {
+    flex: 1,
+    paddingHorizontal: 20,
+    marginTop: 30,
+    marginBottom: 30,
+  },
+  formItem: {
+    flexDirection: 'column',
+  },
+  bioInput: {
+    paddingBottom: 16,
+  },
+  buttonContainer: {
+    marginHorizontal: 30,
+  },
+  button: {
+    marginBottom: 20,
   },
 });
 

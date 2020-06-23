@@ -14,7 +14,7 @@ const LeaderboardScreen = props => {
   const [showDate, setShowDate] = useState(false);
   const [leaderboardDate, setLeaderboardDate] = useState(
     moment()
-      .subtract(3, 'days')
+      .subtract(4, 'days')
       .toDate(),
   );
 

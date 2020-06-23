@@ -4,22 +4,30 @@ import {inputStyles} from '../styles';
 import {colors} from '../styles/common';
 import {Input} from 'native-base';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const InputCustom = props => {
-  const {iconName} = props;
+  const {iconName, isCommunityIcon, style} = props;
+  const IconComponent = !isCommunityIcon ? (
+    <Icon name={iconName} size={24} color={colors.white} style={styles.icon} />
+  ) : (
+    <CommunityIcon
+      name={iconName}
+      size={24}
+      color={colors.white}
+      style={styles.icon}
+    />
+  );
   return (
     <View style={styles.container}>
-      {iconName && (
-        <Icon
-          name={iconName}
-          size={24}
-          color={colors.white}
-          style={styles.icon}
-        />
-      )}
+      {iconName && IconComponent}
       <Input
         {...props}
-        style={[inputStyles.input, {marginHorizontal: iconName ? 24 : 0}]}
+        style={[
+          inputStyles.input,
+          {marginHorizontal: iconName ? 24 : 0},
+          style,
+        ]}
         placeholderTextColor={colors.lightGrey}
       />
     </View>
