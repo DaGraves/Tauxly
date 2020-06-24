@@ -1,16 +1,29 @@
 import React, {useCallback, useContext, useEffect, useState} from 'react';
-import {FlatList, StyleSheet, Text, View} from 'react-native';
-import {Input, Item, Button} from 'native-base';
+import {
+  FlatList,
+  StyleSheet,
+  Keyboard,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import {Button, Item} from 'native-base';
+import {Input} from '../components';
 import firestore from '@react-native-firebase/firestore';
 import {StoreContext} from '../store/StoreContext';
 import moment from 'moment';
 import {INTERACTION_TYPES} from '../constants';
 import {CommentItem} from '../components';
+import {useNavigation} from '@react-navigation/native';
+import {colors} from '../styles/common';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {inputStyles} from '../styles';
 
 const CommentsScreen = props => {
   const {user} = useContext(StoreContext);
+  const navigation = useNavigation();
   const [comment, setComment] = useState('');
   const [serverComments, setServerComments] = useState([]);
+  const [keyboardOpen, setKeyboardOpen] = useState(0);
   const {
     route: {params},
   } = props;
@@ -61,31 +74,57 @@ const CommentsScreen = props => {
         console.log('Send comment error', e);
       }
     }
-  }, [
-    user,
-    comment,
-    params.id,
-    params.userId,
-    params.downloadUrl,
-  ]);
+  }, [user, comment, params.id, params.userId, params.downloadUrl]);
+
+  useEffect(() => {
+    const keyboardDidShow = Keyboard.addListener('keyboardDidShow', ev => {
+      const {
+        endCoordinates: {height, screenY},
+      } = ev;
+      console.log(ev);
+      setKeyboardOpen(height, height);
+    });
+    const keyboardDidHide = Keyboard.addListener('keyboardDidHide', () =>
+      setKeyboardOpen(0),
+    );
+    return () => {
+      keyboardDidHide.remove();
+      keyboardDidShow.remove();
+    };
+  }, []);
 
   return (
     <View style={styles.mainContainer}>
       <FlatList
         data={serverComments}
-        renderItem={CommentItem}
+        contentContainerStyle={keyboardOpen && {height: '20%'}}
+        renderItem={item => (
+          <CommentItem
+            {...item}
+            goToUser={() =>
+              navigation.navigate('OtherProfile', {userId: item.userId})
+            }
+          />
+        )}
         keyExtractor={item => item.id}
       />
-      <Item style={styles.lowerContainer}>
-        <Input
-          placeholder="Type a comment..."
-          value={comment}
-          onChangeText={setComment}
-        />
-        <Button style={styles.button} onPress={handleSendComment}>
-          <Text>Send!</Text>
-        </Button>
-      </Item>
+      <View style={styles.mainLower}>
+        <Item
+          style={[
+            styles.lowerContainer,
+            keyboardOpen && {marginBottom: keyboardOpen},
+          ]}>
+          <Input
+            placeholder="Leave a comment..."
+            value={comment}
+            onChangeText={setComment}
+            style={inputStyles.input}
+          />
+          <TouchableOpacity style={styles.button} onPress={handleSendComment}>
+            <Icon name={'send'} size={20} color={colors.white} />
+          </TouchableOpacity>
+        </Item>
+      </View>
     </View>
   );
 };
@@ -93,15 +132,26 @@ const CommentsScreen = props => {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    justifyContent: 'space-between',
+    backgroundColor: colors.black,
+  },
+  mainLower: {
+    position: 'absolute',
+    width: '100%',
+    alignItems: 'center',
+    bottom: 0,
+    paddingBottom: 30,
+    backgroundColor: colors.black,
   },
   lowerContainer: {
-    marginBottom: 10,
+    width: '90%',
   },
   button: {
-    width: 40,
-    height: 40,
-    borderRadius: 100,
+    width: 36,
+    height: 36,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.yellow,
   },
 });
 

@@ -190,7 +190,6 @@ const styles = StyleSheet.create({
     color: colors.lightGrey,
     textAlign: 'center',
     marginTop: 20,
-    marginBottom: 10,
   },
 });
 

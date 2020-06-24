@@ -1,20 +1,33 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import {colors} from '../styles/common';
 
 const CommentItem = props => {
-  const {item} = props;
+  const {item, goToUser} = props;
 
   return (
-    <View>
-      <Text style={styles.username}>{item.userName}</Text>
-      <Text>{item.comment}</Text>
+    <View style={styles.container}>
+      <Text style={styles.comment}>
+        <Text style={styles.username} onPress={goToUser}>
+          @{item.userName}:
+        </Text>
+        {item.comment}
+      </Text>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    marginVertical: 4,
+  },
+  comment: {
+    color: colors.white,
+  },
   username: {
     fontWeight: 'bold',
+    paddingRight: 10,
+    color: colors.yellow,
   },
 });
 

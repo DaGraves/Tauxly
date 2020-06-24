@@ -23,7 +23,7 @@ const ImageCustom = props => {
       />
       {loading && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size={'large'} color={colors.white} />
+          <ActivityIndicator size={'small'} color={colors.white} />
         </View>
       )}
     </>
