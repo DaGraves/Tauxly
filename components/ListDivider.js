@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   divider: {
     alignSelf: 'center',
     height: 1,
-    width: '90%',
+    width: '60%',
     backgroundColor: 'grey',
     marginVertical: 20,
   },

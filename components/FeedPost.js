@@ -7,6 +7,8 @@ import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import moment from 'moment';
 import {INTERACTION_TYPES} from '../constants';
+import {colors} from '../styles/common';
+import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const {width} = Dimensions.get('window');
 
@@ -80,6 +82,7 @@ const FeedPost = props => {
   }, [item, navigation]);
 
   const shouldShowLike = () => {
+    return true;
     if (disableLike) {
       return false;
     }
@@ -98,16 +101,7 @@ const FeedPost = props => {
   const likes = item.likes || {};
   const isLiked = likes[user.id];
   return (
-    <View style={styles.container}>
-      {!disableUsername ? (
-        <TouchableOpacity
-          style={styles.usernameContainer}
-          onPress={() =>
-            navigation.navigate('OtherProfile', {userId: item.userId})
-          }>
-          <Text>@{item.username}</Text>
-        </TouchableOpacity>
-      ) : null}
+    <View>
       <View style={{height: width / (item.aspectRatio || 1)}}>
         <ImageCustom
           style={styles.image}
@@ -115,32 +109,88 @@ const FeedPost = props => {
           source={{uri: item.downloadUrl}}
         />
       </View>
-      <View>
-        <Text>{item.likeCount || 0} likes</Text>
+      <View style={styles.actionContainer}>
+        {!disableUsername ? (
+          <TouchableOpacity
+            style={styles.usernameContainer}
+            onPress={() =>
+              navigation.navigate('OtherProfile', {userId: item.userId})
+            }>
+            <Text style={styles.username}>@{item.username}</Text>
+          </TouchableOpacity>
+        ) : null}
+        {shouldShowLike() ? (
+          <TouchableOpacity
+            style={styles.likeContainer}
+            onPress={isLiked ? handleUnlike : handleLike}>
+            <CommunityIcon
+              size={20}
+              color={isLiked ? colors.yellow : colors.white}
+              name={isLiked ? 'thumb-up' : 'thumb-up-outline'}
+            />
+            <Text
+              style={[styles.likes, isLiked ? styles.liked : styles.unliked]}>
+              {item.likeCount || 0} likes
+            </Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
-      <View>
-        <Text>{item.description}</Text>
-      </View>
-      {shouldShowLike() ? (
-        <Button onPress={isLiked ? handleUnlike : handleLike}>
-          <Text>{isLiked ? 'Unlike' : 'Like'}</Text>
-        </Button>
-      ) : null}
-      <Button onPress={handleComments}>
-        <Text>Comments</Text>
-      </Button>
+      <Text style={styles.description}>{item.description}</Text>
+      <TouchableOpacity onPress={handleComments}>
+        <Text style={styles.comments}>See more comments</Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    // flex: 1,
+  actionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 10,
   },
-  usernameContainer: {},
+  likeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingLeft: 20,
+    flex: 1 / 2,
+  },
+  likes: {
+    textAlign: 'left',
+    fontSize: 14,
+    marginLeft: 4,
+    fontWeight: 'bold',
+  },
+  liked: {
+    color: colors.yellow,
+  },
+  unliked: {
+    color: colors.white,
+  },
+  usernameContainer: {
+    flex: 1 / 2,
+  },
+  username: {
+    color: colors.white,
+    paddingRight: 20,
+    textAlign: 'right',
+    fontWeight: 'bold',
+  },
   image: {
     height: '100%',
     width: width,
+  },
+  description: {
+    color: colors.white,
+    marginHorizontal: 10,
+    fontSize: 16,
+  },
+  comments: {
+    fontSize: 14,
+    color: colors.lightGrey,
+    textAlign: 'center',
+    marginTop: 20,
+    marginBottom: 10,
   },
 });
 

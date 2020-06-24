@@ -5,12 +5,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import {StoreContext} from '../store/StoreContext';
 import ImagePicker from 'react-native-image-crop-picker';
 import {PictureFeed} from '../components';
+import {colors} from '../styles/common';
 
 const BATCH_SIZE = 2;
 
@@ -23,6 +24,7 @@ const HomeScreen = () => {
   const fetchPosts = useCallback(async () => {
     let postsData = {};
     const startOfDay = moment()
+      .add(-1, 'months')
       .utc()
       .startOf('day')
       .unix();
@@ -98,15 +100,17 @@ const HomeScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <PictureFeed
-        posts={posts}
-        extraPosts={extraPosts}
-        setPosts={setPosts}
-        fetchPosts={fetchPosts}
-        batchSize={BATCH_SIZE}
-      />
-    </SafeAreaView>
+    <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        <PictureFeed
+          posts={posts}
+          extraPosts={extraPosts}
+          setPosts={setPosts}
+          fetchPosts={fetchPosts}
+          batchSize={BATCH_SIZE}
+        />
+      </SafeAreaView>
+    </View>
   );
 };
 
@@ -114,6 +118,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexGrow: 1,
+    backgroundColor: colors.black,
   },
 });
 

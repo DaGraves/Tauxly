@@ -4,6 +4,7 @@ import {
   AddPostDetailsScreen,
   TermsAndConditionsScreen,
   OtherProfileScreen,
+  CommentsScreen,
 } from '../screens';
 import BottomTabNavigator from './bottomTabNavigator';
 import {colors} from '../styles/common';
@@ -50,6 +51,11 @@ const TablessStackNavigator = props => {
         name="OtherProfile"
         component={OtherProfileScreen}
         options={{title: 'Profile', headerBackTitle: 'Back'}}
+      />
+      <Stack.Screen
+        name="Comments"
+        component={CommentsScreen}
+        options={{title: 'Comments', headerBackTitle: 'Back'}}
       />
     </Stack.Navigator>
   );

@@ -1,8 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {ActivityScreen} from '../screens';
+import {ActivityScreen, HomeScreen} from '../screens';
 import AddPostStackNavigator from './addPostStackNavigator';
-import HomeStackNavigator from './homeStackNavigator';
 import LeaderboardStackNavigator from './leaderboardStackNavigator';
 import ProfileStackNavigator from './profileStackNavigator';
 import {colors} from '../styles/common';
@@ -30,7 +29,7 @@ const BottomTabNavigator = () => (
     })}>
     <Tab.Screen
       name="Home"
-      component={HomeStackNavigator}
+      component={HomeScreen}
       options={{
         tabBarIcon: ({focused}) => (
           <Icon

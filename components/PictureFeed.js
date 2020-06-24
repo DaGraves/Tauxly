@@ -1,5 +1,5 @@
 import React, {useCallback, useContext, useState} from 'react';
-import {FlatList} from 'react-native';
+import {FlatList, View} from 'react-native';
 import {StoreContext} from '../store/StoreContext';
 import ListDivider from './ListDivider';
 import FeedPost from './FeedPost';
@@ -50,7 +50,6 @@ const PictureFeed = props => {
   return (
     <FlatList
       keyExtractor={item => item.id}
-      contentContainerStyle={{flex: 1}}
       data={Object.values(posts)}
       extraData={extraPosts === false ? false : Object.values(extraPosts)}
       onRefresh={handleRefresh}
@@ -60,6 +59,7 @@ const PictureFeed = props => {
       onEndReachedThreshold={0.1}
       initialNumToRender={batchSize}
       numColumns={isSplit ? 2 : 1}
+      style={{flex: 1}}
       renderItem={item =>
         isSplit ? (
           <FeedPostSplit {...item} onPress={onPostPress} />
