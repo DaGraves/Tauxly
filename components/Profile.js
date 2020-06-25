@@ -16,6 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {colors} from '../styles/common';
 import ActionSheet from 'react-native-actionsheet';
+import {useNavigation} from '@react-navigation/native';
 
 const Profile = ({
   handleLogOut,
@@ -28,6 +29,7 @@ const Profile = ({
   otherUser,
 }) => {
   const myUser = useContext(StoreContext).user;
+  const navigation = useNavigation();
   const user = otherUser || myUser;
 
   const actionSheetRef = useRef(null);
@@ -57,6 +59,8 @@ const Profile = ({
       });
     }
   };
+
+  const handlePostPress = id => navigation.navigate('Post', {id});
 
   return (
     <>
@@ -159,6 +163,7 @@ const Profile = ({
           disableUsername
           batchSize={batchSize}
           isSplit
+          onPostPress={handlePostPress}
         />
       </View>
     </>

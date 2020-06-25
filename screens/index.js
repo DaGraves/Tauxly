@@ -12,6 +12,7 @@ import ActivityScreen from './ActivityScreen';
 import CommentsScreen from './CommentsScreen';
 import EditProfileScreen from './EditProfileScreen';
 import TermsAndConditionsScreen from './TermsAndConditionsScreen';
+import PostScreen from './PostScreen';
 
 export {
   EmptyScreen,
@@ -28,4 +29,5 @@ export {
   EditProfileScreen,
   TermsAndConditionsScreen,
   OtherProfileScreen,
+  PostScreen,
 };

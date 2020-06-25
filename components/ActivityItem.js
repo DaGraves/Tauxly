@@ -1,14 +1,14 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {INTERACTION_TYPES} from '../constants';
 import ImageCustom from './ImageCustom';
 import {colors} from '../styles/common';
 
-const ActivityItem = props => {
-  const {item} = props;
-
+const ActivityItem = ({item, goToPost}) => {
   return (
-    <View style={styles.imageContainer}>
+    <TouchableOpacity
+      style={styles.imageContainer}
+      onPress={() => goToPost(item.postId)}>
       <ImageCustom
         source={{uri: item.postDownloadUrl}}
         style={styles.image}
@@ -26,7 +26,7 @@ const ActivityItem = props => {
           </Text>
         )}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 

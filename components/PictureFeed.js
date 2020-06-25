@@ -67,7 +67,7 @@ const PictureFeed = props => {
       }
       renderItem={item =>
         isSplit ? (
-          <FeedPostSplit {...item} onPress={onPostPress} />
+          <FeedPostSplit {...item} onPress={() => onPostPress(item.item.id)} />
         ) : (
           <FeedPost
             {...item}

@@ -4,9 +4,11 @@ import firestore from '@react-native-firebase/firestore';
 import {StoreContext} from '../store/StoreContext';
 import {ActivityItem, ListDivider} from '../components';
 import {colors} from '../styles/common';
+import {useNavigation} from '@react-navigation/native';
 
 const ActivityScreen = props => {
   const {user} = useContext(StoreContext);
+  const navigation = useNavigation();
   const [interactions, setInteractions] = useState([]);
 
   const fetchInteractions = async () => {
@@ -27,6 +29,10 @@ const ActivityScreen = props => {
     }
   };
 
+  const goToPost = id => {
+    navigation.navigate('Post', {id});
+  };
+
   useEffect(() => {
     fetchInteractions();
   }, []);
@@ -36,7 +42,7 @@ const ActivityScreen = props => {
       <SafeAreaView style={styles.baseline}>
         <FlatList
           data={interactions}
-          renderItem={ActivityItem}
+          renderItem={item => <ActivityItem {...item} goToPost={goToPost} />}
           keyExtractor={item => item.id}
           ItemSeparatorComponent={ListDivider}
         />
