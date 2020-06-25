@@ -1,8 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {ActivityScreen, HomeScreen} from '../screens';
+import {ActivityScreen, HomeScreen, LeaderboardScreen} from '../screens';
 import AddPostStackNavigator from './addPostStackNavigator';
-import LeaderboardStackNavigator from './leaderboardStackNavigator';
 import ProfileStackNavigator from './profileStackNavigator';
 import {colors} from '../styles/common';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -42,7 +41,7 @@ const BottomTabNavigator = () => (
     />
     <Tab.Screen
       name="Leaderboard"
-      component={LeaderboardStackNavigator}
+      component={LeaderboardScreen}
       options={{
         tabBarIcon: ({focused}) => (
           <CommunityIcon

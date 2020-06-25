@@ -82,7 +82,6 @@ const FeedPost = props => {
   }, [item, navigation]);
 
   const shouldShowLike = () => {
-    return true;
     if (disableLike) {
       return false;
     }
@@ -100,6 +99,7 @@ const FeedPost = props => {
 
   const likes = item.likes || {};
   const isLiked = likes[user.id];
+  const showLikes = shouldShowLike();
   return (
     <View>
       <View style={{height: width / (item.aspectRatio || 1)}}>
@@ -116,10 +116,12 @@ const FeedPost = props => {
             onPress={() =>
               navigation.navigate('OtherProfile', {userId: item.userId})
             }>
-            <Text style={styles.username}>@{item.username}</Text>
+            <Text style={[styles.username, !showLikes && styles.onlyUserName]}>
+              @{item.username}
+            </Text>
           </TouchableOpacity>
         ) : null}
-        {shouldShowLike() ? (
+        {showLikes ? (
           <TouchableOpacity
             style={styles.likeContainer}
             onPress={isLiked ? handleUnlike : handleLike}>
@@ -175,6 +177,9 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     textAlign: 'right',
     fontWeight: 'bold',
+  },
+  onlyUserName: {
+    textAlign: 'center',
   },
   image: {
     height: '100%',

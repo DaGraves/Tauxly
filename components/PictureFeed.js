@@ -4,6 +4,7 @@ import {StoreContext} from '../store/StoreContext';
 import ListDivider from './ListDivider';
 import FeedPost from './FeedPost';
 import FeedPostSplit from './FeedPostSplit';
+import LeaderboardPrizes from './LeaderboardPrizes';
 
 // Receive posts in an object format
 const PictureFeed = props => {
@@ -17,6 +18,7 @@ const PictureFeed = props => {
     batchSize = 10,
     isSplit = false,
     onPostPress,
+    HeaderComponent,
   } = props;
   const {user} = useContext(StoreContext);
   const [refreshing, setRefreshing] = useState(false);
@@ -60,6 +62,9 @@ const PictureFeed = props => {
       initialNumToRender={batchSize}
       numColumns={isSplit ? 2 : 1}
       style={{flex: 1}}
+      ListHeaderComponent={
+        HeaderComponent ? () => <HeaderComponent posts={posts} /> : null
+      }
       renderItem={item =>
         isSplit ? (
           <FeedPostSplit {...item} onPress={onPostPress} />

@@ -13,7 +13,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {PictureFeed} from '../components';
 import {colors} from '../styles/common';
 
-const BATCH_SIZE = 2;
+const BATCH_SIZE = 10;
 
 const HomeScreen = () => {
   const [posts, setPosts] = useState({});
@@ -24,7 +24,6 @@ const HomeScreen = () => {
   const fetchPosts = useCallback(async () => {
     let postsData = {};
     const startOfDay = moment()
-      .add(-1, 'months')
       .utc()
       .startOf('day')
       .unix();

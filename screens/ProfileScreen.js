@@ -13,7 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 import Profile from '../components/Profile';
 import {colors} from '../styles/common';
 
-const BATCH_SIZE = 2;
+const BATCH_SIZE = 10;
 
 const ProfileScreen = props => {
   const navigation = useNavigation();

@@ -12,7 +12,7 @@ const ImageCustom = props => {
   const handleLoadEnd = () => setLoading(false);
 
   // UNCOMMENT TO SEE PRODUCTION IMAGES ON DEV
-  __DEV__ = false;
+  // __DEV__ = false;
   return (
     <>
       <Image

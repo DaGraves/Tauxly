@@ -1,8 +1,9 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {FlatList, SafeAreaView} from 'react-native';
+import {FlatList, SafeAreaView, StyleSheet, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {StoreContext} from '../store/StoreContext';
-import {ActivityItem} from '../components';
+import {ActivityItem, ListDivider} from '../components';
+import {colors} from '../styles/common';
 
 const ActivityScreen = props => {
   const {user} = useContext(StoreContext);
@@ -31,14 +32,24 @@ const ActivityScreen = props => {
   }, []);
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <FlatList
-        data={interactions}
-        renderItem={ActivityItem}
-        keyExtractor={item => item.id}
-      />
-    </SafeAreaView>
+    <View style={styles.baseline}>
+      <SafeAreaView style={styles.baseline}>
+        <FlatList
+          data={interactions}
+          renderItem={ActivityItem}
+          keyExtractor={item => item.id}
+          ItemSeparatorComponent={ListDivider}
+        />
+      </SafeAreaView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  baseline: {
+    flex: 1,
+    backgroundColor: colors.black,
+  },
+});
 
 export default ActivityScreen;

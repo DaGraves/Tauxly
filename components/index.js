@@ -8,6 +8,7 @@ import PictureFeed from './PictureFeed';
 import ListDivider from './ListDivider';
 import GradientBackground from './GradientBackground';
 import LoadingOverlay from './LoadingOverlay';
+import LeaderboardPrizes from './LeaderboardPrizes';
 
 export {
   Image,
@@ -20,4 +21,5 @@ export {
   ListDivider,
   GradientBackground,
   LoadingOverlay,
+  LeaderboardPrizes,
 };

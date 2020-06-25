@@ -1,22 +1,21 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, TouchableOpacity} from 'react-native';
-import {PictureFeed} from '../components';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {PictureFeed, LeaderboardPrizes} from '../components';
+import {Button, Text} from 'native-base';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import {colors} from '../styles/common';
+import {buttonStyles} from '../styles';
 
-const BATCH_SIZE = 2;
+const BATCH_SIZE = 10;
 
 const LeaderboardScreen = props => {
   const [posts, setPosts] = useState({});
   const [extraPosts, setExtraPosts] = useState({});
   const lastDocRef = useRef(null);
   const [showDate, setShowDate] = useState(false);
-  const [leaderboardDate, setLeaderboardDate] = useState(
-    moment()
-      .subtract(4, 'days')
-      .toDate(),
-  );
+  const [leaderboardDate, setLeaderboardDate] = useState(moment().toDate());
 
   const selectDate = useCallback(
     date => {
@@ -99,34 +98,43 @@ const LeaderboardScreen = props => {
   }, [leaderboardDate]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <DateTimePickerModal
-        isVisible={showDate}
-        mode="date"
-        value={leaderboardDate}
-        maximumDate={new Date()}
-        onConfirm={selectDate}
-        onCancel={() => {
-          setShowDate(false);
-        }}
-      />
-      <TouchableOpacity onPress={() => setShowDate(true)}>
-        <Text style={styles.dateSelectorText}>
-          {moment(leaderboardDate).format('DD MMMM YYYY')}
-        </Text>
-      </TouchableOpacity>
-      <PictureFeed
-        posts={posts}
-        extraPosts={extraPosts}
-        setPosts={setPosts}
-        fetchPosts={fetchPosts}
-        batchSize={BATCH_SIZE}
-      />
-    </SafeAreaView>
+    <View style={styles.baseline}>
+      <SafeAreaView style={styles.container}>
+        <DateTimePickerModal
+          isVisible={showDate}
+          mode="date"
+          value={leaderboardDate}
+          maximumDate={new Date()}
+          onConfirm={selectDate}
+          onCancel={() => {
+            setShowDate(false);
+          }}
+        />
+        <Button
+          style={[buttonStyles.buttonSecondary, styles.button]}
+          onPress={() => setShowDate(true)}>
+          <Text style={buttonStyles.buttonSecondaryText}>
+            {moment(leaderboardDate).format('DD MMMM YYYY')}
+          </Text>
+        </Button>
+        <PictureFeed
+          posts={posts}
+          extraPosts={extraPosts}
+          setPosts={setPosts}
+          fetchPosts={fetchPosts}
+          batchSize={BATCH_SIZE}
+          HeaderComponent={LeaderboardPrizes}
+        />
+      </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  baseline: {
+    flex: 1,
+    backgroundColor: colors.black,
+  },
   container: {
     flex: 1,
     flexGrow: 1,
@@ -135,6 +143,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 30,
     color: 'blue',
+  },
+  button: {
+    marginHorizontal: 30,
+    marginVertical: 10,
   },
 });
 
