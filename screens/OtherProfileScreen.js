@@ -107,6 +107,7 @@ const OtherProfileScreen = props => {
           fetchPosts={fetchPosts}
           batchSize={BATCH_SIZE}
           otherUser={user}
+          isLoading={loading}
         />
       </SafeAreaView>
     </View>

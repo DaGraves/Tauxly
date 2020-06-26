@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text} from 'react-native';
+import {ScrollView, StyleSheet} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import {colors} from '../styles/common';
@@ -29,7 +29,6 @@ const PostScreen = props => {
 
   return (
     <ScrollView style={styles.baseline}>
-      <Text>POSTTTTTTT {postId}</Text>
       {data && <FeedPost item={data} />}
     </ScrollView>
   );
