@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   Clipboard,
+  ActivityIndicator,
 } from 'react-native';
 import {Toast} from 'native-base';
 import ImageCustom from './ImageCustom';
@@ -27,6 +28,7 @@ const Profile = ({
   fetchPosts,
   batchSize,
   otherUser,
+  loading,
 }) => {
   const myUser = useContext(StoreContext).user;
   const navigation = useNavigation();
@@ -154,6 +156,17 @@ const Profile = ({
         </View>
       </View>
       <View style={styles.container}>
+        {loading ? (
+          <ActivityIndicator
+            color={colors.white}
+            size={'small'}
+            style={styles.loading}
+          />
+        ) : (
+          !Object.keys(posts).length && (
+            <Text style={styles.text}>There are no posts yet ...</Text>
+          )
+        )}
         <PictureFeed
           posts={posts}
           extraPosts={extraPosts}
@@ -223,6 +236,14 @@ const styles = StyleSheet.create({
   socialContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+  },
+  text: {
+    color: colors.lightGrey,
+    textAlign: 'center',
+    marginTop: 30,
+  },
+  loading: {
+    marginTop: 30,
   },
 });
 

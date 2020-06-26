@@ -38,11 +38,6 @@ const LeaderboardScreen = props => {
       .utc()
       .startOf('day')
       .unix();
-    const endOfDay = moment(leaderboardDate)
-      .add(-leaderboardDate.getTimezoneOffset(), 'minutes')
-      .utc()
-      .endOf('day')
-      .unix();
 
     if (lastDocRef.current) {
       // The subsequent dynamic fetches

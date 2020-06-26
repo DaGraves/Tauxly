@@ -5,7 +5,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import {StoreContext} from '../store/StoreContext';
@@ -18,6 +25,7 @@ const BATCH_SIZE = 10;
 const HomeScreen = () => {
   const [posts, setPosts] = useState({});
   const [extraPosts, setExtraPosts] = useState({});
+  const [loading, setLoading] = useState(false);
   const lastDocRef = useRef(null);
   const {user} = useContext(StoreContext);
 
@@ -32,18 +40,44 @@ const HomeScreen = () => {
       .endOf('day')
       .unix();
 
-    if (lastDocRef.current) {
-      // Subsequent, paginated fetches
-      const data = await firestore()
-        .collection('posts')
-        .where('createdAt', '>=', startOfDay)
-        .where('createdAt', '<=', endOfDay)
-        .orderBy('createdAt', 'desc')
-        .startAfter(lastDocRef.current)
-        .limit(BATCH_SIZE)
-        .get();
+    try {
+      if (lastDocRef.current) {
+        // Subsequent, paginated fetches
+        const data = await firestore()
+          .collection('posts')
+          .where('createdAt', '>=', startOfDay)
+          .where('createdAt', '<=', endOfDay)
+          .orderBy('createdAt', 'desc')
+          .startAfter(lastDocRef.current)
+          .limit(BATCH_SIZE)
+          .get();
 
-      if (!data.empty) {
+        if (!data.empty) {
+          data.docs.forEach((docRef, idx) => {
+            const doc = docRef.data();
+            if (doc.userId !== user.id) {
+              postsData = {
+                ...postsData,
+                [docRef.id]: {...doc, id: docRef.id},
+              };
+            }
+            if (idx === data.docs.length - 1) {
+              lastDocRef.current = docRef;
+            }
+          });
+          setPosts({...posts, ...postsData});
+          setExtraPosts(postsData);
+        }
+      } else {
+        // The initial fetch
+        const data = await firestore()
+          .collection('posts')
+          .where('createdAt', '>=', startOfDay)
+          .where('createdAt', '<=', endOfDay)
+          .orderBy('createdAt', 'desc')
+          .limit(BATCH_SIZE)
+          .get();
+
         data.docs.forEach((docRef, idx) => {
           const doc = docRef.data();
           if (doc.userId !== user.id) {
@@ -56,32 +90,22 @@ const HomeScreen = () => {
             lastDocRef.current = docRef;
           }
         });
-        setPosts({...posts, ...postsData});
-        setExtraPosts(postsData);
+        setPosts(postsData);
+        setLoading(false);
       }
-    } else {
-      // The initial fetch
-      const data = await firestore()
-        .collection('posts')
-        .where('createdAt', '>=', startOfDay)
-        .where('createdAt', '<=', endOfDay)
-        .orderBy('createdAt', 'desc')
-        .limit(BATCH_SIZE)
-        .get();
-
-      data.docs.forEach((docRef, idx) => {
-        const doc = docRef.data();
-        if (doc.userId !== user.id) {
-          postsData = {
-            ...postsData,
-            [docRef.id]: {...doc, id: docRef.id},
-          };
-        }
-        if (idx === data.docs.length - 1) {
-          lastDocRef.current = docRef;
-        }
-      });
-      setPosts(postsData);
+    } catch (e) {
+      Alert.alert(
+        'Something went wrong',
+        "We couldn't fetch any posts at this time...",
+        [
+          {
+            text: 'Ok',
+            style: 'cancel',
+          },
+        ],
+        {cancelable: false},
+      );
+      console.log('Login Error', e);
     }
   }, [posts, user.id]);
 
@@ -94,6 +118,7 @@ const HomeScreen = () => {
   }, []);
 
   useEffect(() => {
+    setLoading(true);
     fetchPosts();
     cleanImagePicker();
   }, []);
@@ -101,6 +126,17 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.container}>
+        {loading ? (
+          <ActivityIndicator
+            color={colors.white}
+            size={'small'}
+            style={styles.loading}
+          />
+        ) : (
+          !Object.keys(posts).length && (
+            <Text style={styles.text}>There are no posts for today... yet</Text>
+          )
+        )}
         <PictureFeed
           posts={posts}
           extraPosts={extraPosts}
@@ -118,6 +154,14 @@ const styles = StyleSheet.create({
     flex: 1,
     flexGrow: 1,
     backgroundColor: colors.black,
+  },
+  text: {
+    color: colors.lightGrey,
+    textAlign: 'center',
+    marginTop: 30,
+  },
+  loading: {
+    marginTop: 30,
   },
 });
 

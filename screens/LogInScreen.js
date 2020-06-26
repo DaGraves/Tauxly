@@ -1,6 +1,7 @@
 import React, {useCallback, useState} from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Image,
   SafeAreaView,
   StyleSheet,
@@ -23,8 +24,20 @@ const LogInScreen = props => {
   const handleLogin = useCallback(async () => {
     setLoading(true);
     try {
-      await auth().signInWithEmailAndPassword(email, password);
+      const sanitizedEmail = email.replace(' ', '');
+      await auth().signInWithEmailAndPassword(sanitizedEmail, password);
     } catch (e) {
+      Alert.alert(
+        'Login error',
+        'Email or Password are incorrect!',
+        [
+          {
+            text: 'Ok',
+            style: 'cancel',
+          },
+        ],
+        {cancelable: false},
+      );
       console.log('Login Error', e);
     }
     setLoading(false);

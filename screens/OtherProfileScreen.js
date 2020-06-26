@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {Alert, SafeAreaView, StyleSheet, View} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
@@ -14,6 +14,7 @@ const OtherProfileScreen = props => {
   const [posts, setPosts] = useState({});
   const [extraPosts, setExtraPosts] = useState({});
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
   const lastDocRef = useRef(null);
 
   const handleLogOut = useCallback(async () => {
@@ -25,17 +26,36 @@ const OtherProfileScreen = props => {
   }, []);
 
   const fetchPosts = useCallback(async () => {
-    if (lastDocRef.current) {
-      // Subsequent, paginated fetches
-      const dbData = await firestore()
-        .collection('posts')
-        .where('userId', '==', userId)
-        .orderBy('createdAt', 'desc')
-        .startAfter(lastDocRef.current)
-        .limit(BATCH_SIZE)
-        .get();
+    try {
+      if (lastDocRef.current) {
+        // Subsequent, paginated fetches
+        const dbData = await firestore()
+          .collection('posts')
+          .where('userId', '==', userId)
+          .orderBy('createdAt', 'desc')
+          .startAfter(lastDocRef.current)
+          .limit(BATCH_SIZE)
+          .get();
 
-      if (!dbData.empty) {
+        if (!dbData.empty) {
+          let data = {};
+          dbData.docs.forEach((item, idx) => {
+            data = {...data, [item.id]: {id: item.id, ...item.data()}};
+            if (idx === dbData.docs.length - 1) {
+              lastDocRef.current = item;
+            }
+          });
+          setPosts({...posts, ...data});
+          setExtraPosts(data);
+        }
+      } else {
+        // Initial fetch
+        const dbData = await firestore()
+          .collection('posts')
+          .where('userId', '==', userId)
+          .orderBy('createdAt', 'desc')
+          .limit(BATCH_SIZE)
+          .get();
         let data = {};
         dbData.docs.forEach((item, idx) => {
           data = {...data, [item.id]: {id: item.id, ...item.data()}};
@@ -43,25 +63,21 @@ const OtherProfileScreen = props => {
             lastDocRef.current = item;
           }
         });
-        setPosts({...posts, ...data});
-        setExtraPosts(data);
+        setPosts(data);
+        setLoading(false);
       }
-    } else {
-      // Initial fetch
-      const dbData = await firestore()
-        .collection('posts')
-        .where('userId', '==', userId)
-        .orderBy('createdAt', 'desc')
-        .limit(BATCH_SIZE)
-        .get();
-      let data = {};
-      dbData.docs.forEach((item, idx) => {
-        data = {...data, [item.id]: {id: item.id, ...item.data()}};
-        if (idx === dbData.docs.length - 1) {
-          lastDocRef.current = item;
-        }
-      });
-      setPosts(data);
+    } catch (e) {
+      Alert.alert(
+        'Something went wrong',
+        'We had issues fetching these posts... Please try again later!',
+        [
+          {
+            text: 'Ok',
+            style: 'cancel',
+          },
+        ],
+        {cancelable: false},
+      );
     }
   }, [posts, userId]);
 
@@ -74,6 +90,7 @@ const OtherProfileScreen = props => {
   };
 
   useEffect(() => {
+    setLoading(true);
     fetchUser();
     fetchPosts();
   }, []);

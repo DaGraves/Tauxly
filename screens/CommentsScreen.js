@@ -5,8 +5,10 @@ import {
   Keyboard,
   View,
   TouchableOpacity,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
-import {Button, Item} from 'native-base';
+import {Item} from 'native-base';
 import {Input} from '../components';
 import firestore from '@react-native-firebase/firestore';
 import {StoreContext} from '../store/StoreContext';
@@ -21,8 +23,10 @@ import {inputStyles} from '../styles';
 const CommentsScreen = props => {
   const {user} = useContext(StoreContext);
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
   const [comment, setComment] = useState('');
   const [serverComments, setServerComments] = useState([]);
+  const [addedComments, setAddedComments] = useState([]);
   const [keyboardOpen, setKeyboardOpen] = useState(0);
   const {
     route: {params},
@@ -45,6 +49,7 @@ const CommentsScreen = props => {
 
   const handleSendComment = useCallback(async () => {
     if (user && comment) {
+      setLoading(true);
       try {
         await firestore()
           .collection('comments')
@@ -69,9 +74,21 @@ const CommentsScreen = props => {
               type: INTERACTION_TYPES.COMMENT,
             });
         }
-        fetchComments();
+        await fetchComments();
       } catch (e) {
-        console.log('Send comment error', e);
+        Alert.alert(
+          'Something went wrong',
+          "We couldn't post your comment... Please try again later!",
+          [
+            {
+              text: 'Ok',
+              style: 'cancel',
+            },
+          ],
+          {cancelable: false},
+        );
+      } finally {
+        setLoading(false);
       }
     }
   }, [user, comment, params.id, params.userId, params.downloadUrl]);
@@ -97,6 +114,7 @@ const CommentsScreen = props => {
     <View style={styles.mainContainer}>
       <FlatList
         data={serverComments}
+        extraData={addedComments}
         contentContainerStyle={keyboardOpen && {height: '20%'}}
         renderItem={item => (
           <CommentItem
@@ -120,8 +138,14 @@ const CommentsScreen = props => {
             onChangeText={setComment}
             style={inputStyles.input}
           />
-          <TouchableOpacity style={styles.button} onPress={handleSendComment}>
-            <Icon name={'send'} size={20} color={colors.white} />
+          <TouchableOpacity
+            style={[styles.button, loading && styles.buttonLoading]}
+            onPress={handleSendComment}>
+            {loading ? (
+              <ActivityIndicator size={'small'} color={colors.white} />
+            ) : (
+              <Icon name={'send'} size={20} color={colors.white} />
+            )}
           </TouchableOpacity>
         </Item>
       </View>
@@ -152,6 +176,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.yellow,
+  },
+  buttonLoading: {
+    backgroundColor: colors.lightGrey,
   },
 });
 

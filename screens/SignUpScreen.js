@@ -6,6 +6,7 @@ import {
   Image,
   SafeAreaView,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -65,7 +66,7 @@ const SignUpScreen = () => {
       passwordConfirm,
       termsAccepted,
     } = state;
-    if (password === passwordConfirm && termsAccepted) {
+    if (password && password === passwordConfirm && termsAccepted) {
       try {
         const result = await auth().createUserWithEmailAndPassword(
           email,
@@ -98,10 +99,30 @@ const SignUpScreen = () => {
           .set(userData);
         setUser(userData);
       } catch (e) {
-        console.log('ERROR', e);
+        Alert.alert(
+          'Something went wrong',
+          'Please check your details and set a strong password!',
+          [
+            {
+              text: 'Ok',
+              style: 'cancel',
+            },
+          ],
+          {cancelable: false},
+        );
       }
     } else {
-      console.log('Passwords not a match');
+      Alert.alert(
+        'Account error',
+        'Your passwords do not match!',
+        [
+          {
+            text: 'Ok',
+            style: 'cancel',
+          },
+        ],
+        {cancelable: false},
+      );
     }
     setLoading(false);
   }, [state, profilePicture]);
