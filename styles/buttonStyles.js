@@ -26,6 +26,7 @@ export default StyleSheet.create({
     borderColor: colors.white,
   },
   buttonSecondaryText: {
+    color: colors.white,
     ...buttonTextDefault,
   },
 });

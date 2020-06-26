@@ -267,7 +267,9 @@ const SignUpScreen = () => {
               style={[buttonStyles.buttonSecondary, styles.button]}
               onPress={() => navigation.navigate('LogIn')}>
               <Icon name="arrow-back" color={colors.white} size={22} />
-              <Text>Back to Login</Text>
+              <Text style={buttonStyles.buttonSecondaryText}>
+                Back to Login
+              </Text>
             </Button>
             <TouchableOpacity
               onPress={() => navigation.navigate('TermsAndConditions')}

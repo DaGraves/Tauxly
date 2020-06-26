@@ -122,8 +122,9 @@ const AddPostDetailsScreen = props => {
       <KeyboardAwareScrollView
         style={styles.container}
         contentContainerStyle={styles.container}>
-        <View style={styles.imageContainer}>
+        <View style={{width, height: (params.height * width) / params.width}}>
           <Image
+            resizeMode={'contain'}
             style={styles.image}
             source={{
               uri: params.path,
@@ -147,20 +148,20 @@ const AddPostDetailsScreen = props => {
               `Submit your picture for ${iap.localizedPrice || '0.99 USD'}`}
           </Text>
         </View>
+        <View style={styles.buttonContainer}>
+          <Button
+            disabled={!(iap && iap.localizedPrice)}
+            style={[buttonStyles.buttonPrimary, styles.button]}
+            onPress={handleSubmit}>
+            <Text style={buttonStyles.buttonPrimaryText}>Submit</Text>
+          </Button>
+          <Button
+            style={[buttonStyles.buttonSecondary, styles.button]}
+            onPress={() => navigation.goBack()}>
+            <Text style={buttonStyles.buttonSecondaryText}>Retake picture</Text>
+          </Button>
+        </View>
       </KeyboardAwareScrollView>
-      <View style={styles.buttonContainer}>
-        <Button
-          disabled={!(iap && iap.localizedPrice)}
-          style={[buttonStyles.buttonPrimary, styles.button]}
-          onPress={handleSubmit}>
-          <Text style={buttonStyles.buttonPrimaryText}>Submit</Text>
-        </Button>
-        <Button
-          style={[buttonStyles.buttonSecondary, styles.button]}
-          onPress={() => navigation.goBack()}>
-          <Text style={buttonStyles.buttonSecondaryText}>Retake picture</Text>
-        </Button>
-      </View>
     </View>
   );
 };
@@ -173,14 +174,10 @@ const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: colors.black,
     flex: 1,
-    justifyContent: 'space-between',
   },
   buttonContainer: {
     alignItems: 'center',
     marginBottom: 40,
-  },
-  imageContainer: {
-    height: 300,
   },
   formContainer: {
     marginHorizontal: 20,
