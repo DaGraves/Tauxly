@@ -17,6 +17,7 @@ const BottomTabNavigator = () => (
       showLabel: false,
       style: {
         backgroundColor: colors.darkGrey,
+        borderTopWidth: 0,
       },
     }}
     defaultNavigationOptions={({screenProps}) => ({
