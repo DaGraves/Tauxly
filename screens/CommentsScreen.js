@@ -137,6 +137,7 @@ const CommentsScreen = props => {
             value={comment}
             onChangeText={setComment}
             style={inputStyles.input}
+            maxLength={200}
           />
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonLoading]}

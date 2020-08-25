@@ -1,8 +1,12 @@
 import React, {useCallback, useContext, useRef, useState} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {StoreContext} from '../store/StoreContext';
 import {Form, Item, Textarea, Button, Text} from 'native-base';
-import {DEFAULT_PROFILE_PICTURE, PROFILE_IMAGE_OPTIONS} from '../constants';
+import {
+  DEFAULT_PROFILE_PICTURE,
+  PROFILE_IMAGE_OPTIONS,
+  VALIDATIONS,
+} from '../constants';
 import ActionSheet from 'react-native-actionsheet';
 import ImagePicker from 'react-native-image-crop-picker';
 import firestore from '@react-native-firebase/firestore';
@@ -27,6 +31,7 @@ const EditProfileScreen = props => {
   const [twitter, setTwitter] = useState(user.twitter || '');
   const [facebook, setFacebook] = useState(user.facebook || '');
   const [photoUrl, setPhotoUrl] = useState(user.photoUrl || null);
+  const [errors, setErrors] = useState({});
 
   const handleChangePicture = useCallback(() => {
     actionSheetRef && actionSheetRef.current && actionSheetRef.current.show();
@@ -84,13 +89,36 @@ const EditProfileScreen = props => {
         };
       }
 
-      // Update the DB with the new data
-      await firestore()
-        .collection('users')
-        .doc(user.id)
-        .update(updateObject);
-      setUser({...user, ...updateObject});
-      navigation.goBack();
+      let newErrors = {};
+      if (!VALIDATIONS.paypalEmail(paypal)) {
+        newErrors.paypalEmail = 'This email is not valid!';
+      }
+
+      if (Object.keys(newErrors).length) {
+        setErrors(newErrors);
+      } else {
+        try {
+          // Update the DB with the new data
+          await firestore()
+            .collection('users')
+            .doc(user.id)
+            .update(updateObject);
+          setUser({...user, ...updateObject});
+          navigation.goBack();
+        } catch (e) {
+          Alert.alert(
+            'Something went wrong',
+            "We couldn't update your information, please try again later :(",
+            [
+              {
+                text: 'Ok',
+                style: 'cancel',
+              },
+            ],
+            {cancelable: false},
+          );
+        }
+      }
     } catch (e) {
       console.log('Error', e);
     }
@@ -139,9 +167,10 @@ const EditProfileScreen = props => {
               onChangeText={setPaypal}
               iconName="attach-money"
               maxLength={100}
+              error={errors.paypalEmail}
             />
           </Item>
-          <Item style={[inputStyles.item, , styles.bioInput]}>
+          <Item style={[inputStyles.item, styles.bioInput]}>
             <Input
               autoCapitalize="none"
               placeholder="Biography"

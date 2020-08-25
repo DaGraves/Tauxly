@@ -27,6 +27,25 @@ const ProfileScreen = props => {
     await auth().signOut();
   }, []);
 
+  const handleResetPassword = useCallback(async () => {
+    try {
+      await auth().sendPasswordResetEmail(user.email);
+      Alert.alert(
+        'Reset Successful!',
+        'We sent you an email to help you reset you password.',
+        [
+          {
+            text: 'Ok',
+            style: 'cancel',
+          },
+        ],
+        {cancelable: false},
+      );
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
+
   const handleEditProfile = useCallback(() => {
     navigation.navigate('EditProfile');
   }, []);
@@ -98,6 +117,7 @@ const ProfileScreen = props => {
       <SafeAreaView style={styles.container}>
         <Profile
           handleLogOut={handleLogOut}
+          handleResetPassword={handleResetPassword}
           handleEditProfile={handleEditProfile}
           posts={posts}
           extraPosts={extraPosts}

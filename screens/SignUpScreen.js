@@ -18,7 +18,11 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {StoreContext} from '../store/StoreContext';
 import ActionSheet from 'react-native-actionsheet';
 import {uuid} from 'uuidv4';
-import {DEFAULT_PROFILE_PICTURE, PROFILE_IMAGE_OPTIONS} from '../constants';
+import {
+  DEFAULT_PROFILE_PICTURE,
+  PROFILE_IMAGE_OPTIONS,
+  VALIDATIONS,
+} from '../constants';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {GradientBackground, Input} from '../components';
 import {colors} from '../styles/common';
@@ -43,6 +47,7 @@ const SignUpScreen = () => {
   const {user, setUser} = useContext(StoreContext);
   const actionSheetRef = useRef(null);
   const [state, setState] = useState(DEFAULT_STATE);
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
 
@@ -58,15 +63,28 @@ const SignUpScreen = () => {
 
   const onSignUp = useCallback(async () => {
     setLoading(true);
-    const {
-      email,
-      password,
-      paypalEmail,
-      username,
-      passwordConfirm,
-      termsAccepted,
-    } = state;
-    if (password && password === passwordConfirm && termsAccepted) {
+    const {email, password, paypalEmail, username, passwordConfirm} = state;
+    let newErrors = {};
+    if (!VALIDATIONS.email(email)) {
+      newErrors.email = 'Email address not valid!';
+    }
+    if (!VALIDATIONS.paypalEmail(paypalEmail)) {
+      newErrors.paypalEmail = 'Paypal email address not valid!';
+    }
+    if (password !== passwordConfirm) {
+      newErrors.passwordConfirm = 'The passwords do not match!';
+    }
+    if (!VALIDATIONS.username(username)) {
+      newErrors.username = 'Username is not valid!';
+    }
+    if (!VALIDATIONS.password(password)) {
+      newErrors.password = 'The password is too short!';
+    }
+    if (!VALIDATIONS.passwordConfirm(passwordConfirm)) {
+      newErrors.passwordConfirm = 'The password confirmation is too short!';
+    }
+
+    if (!Object.keys(newErrors).length) {
       try {
         const result = await auth().createUserWithEmailAndPassword(
           email,
@@ -99,30 +117,10 @@ const SignUpScreen = () => {
           .set(userData);
         setUser(userData);
       } catch (e) {
-        Alert.alert(
-          'Something went wrong',
-          'Please check your details and set a strong password!',
-          [
-            {
-              text: 'Ok',
-              style: 'cancel',
-            },
-          ],
-          {cancelable: false},
-        );
+        setErrors({password: 'Invalid Email or Password!'});
       }
     } else {
-      Alert.alert(
-        'Account error',
-        'Your passwords do not match!',
-        [
-          {
-            text: 'Ok',
-            style: 'cancel',
-          },
-        ],
-        {cancelable: false},
-      );
+      setErrors(newErrors);
     }
     setLoading(false);
   }, [state, profilePicture]);
@@ -198,6 +196,8 @@ const SignUpScreen = () => {
                   value={state.email}
                   onChangeText={val => onChange('email', val)}
                   iconName="email"
+                  maxLength={255}
+                  error={errors.email}
                 />
               </Item>
               <Item style={inputStyles.item}>
@@ -210,6 +210,8 @@ const SignUpScreen = () => {
                   value={state.paypalEmail}
                   onChangeText={val => onChange('paypalEmail', val)}
                   iconName="attach-money"
+                  maxLength={255}
+                  error={errors.paypalEmail}
                 />
               </Item>
               <Item style={inputStyles.item}>
@@ -219,6 +221,8 @@ const SignUpScreen = () => {
                   value={state.username}
                   onChangeText={val => onChange('username', val)}
                   iconName="person"
+                  maxLength={50}
+                  error={errors.username}
                 />
               </Item>
               <Item style={inputStyles.item}>
@@ -230,6 +234,8 @@ const SignUpScreen = () => {
                   blurOnSubmit={false}
                   onChangeText={val => onChange('password', val)}
                   iconName="lock"
+                  maxLength={128}
+                  error={errors.password}
                 />
               </Item>
               <Item style={inputStyles.item}>
@@ -241,6 +247,8 @@ const SignUpScreen = () => {
                   blurOnSubmit={false}
                   onChangeText={val => onChange('passwordConfirm', val)}
                   iconName="lock"
+                  maxLength={128}
+                  error={errors.passwordConfirm}
                 />
               </Item>
             </Form>

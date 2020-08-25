@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {inputStyles} from '../styles';
 import {colors} from '../styles/common';
 import {Input} from 'native-base';
@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const InputCustom = props => {
-  const {iconName, isCommunityIcon, style} = props;
+  const {iconName, isCommunityIcon, style, error} = props;
   const IconComponent = !isCommunityIcon ? (
     <Icon name={iconName} size={24} color={colors.white} style={styles.icon} />
   ) : (
@@ -30,11 +30,30 @@ const InputCustom = props => {
         ]}
         placeholderTextColor={colors.lightGrey}
       />
+      {error ? (
+        <View style={styles.errorContainer}>
+          <Icon name={'error'} size={14} color={colors.red} />
+          <Text style={styles.error}>
+            {error}
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  error: {
+    color: colors.red,
+    fontSize: 13,
+    marginLeft: 4,
+  },
+  errorContainer: {
+    position: 'absolute',
+    bottom: -20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     flexDirection: 'row',

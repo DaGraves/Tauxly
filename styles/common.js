@@ -6,6 +6,7 @@ const colors = {
   darkGrey: '#272727',
   black: '#000',
   blue: '#001038',
+  red: '#ff4133',
 };
 
 export {colors};

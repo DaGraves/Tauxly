@@ -94,7 +94,6 @@ const AddPostDetailsScreen = props => {
   ]);
 
   useEffect(() => {
-    console.log('<<<<<', currentPurchase.isComplete, currentPurchase.isLogged);
     if (
       currentPurchase &&
       currentPurchase.isComplete &&
@@ -141,6 +140,7 @@ const AddPostDetailsScreen = props => {
               value={description}
               onChangeText={setDescription}
               multiline
+              maxLength={200}
             />
           </Item>
           <Text style={styles.paymentText}>

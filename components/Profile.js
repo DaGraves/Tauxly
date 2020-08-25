@@ -21,6 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 
 const Profile = ({
   handleLogOut,
+  handleResetPassword,
   handleEditProfile,
   posts,
   extraPosts,
@@ -37,8 +38,11 @@ const Profile = ({
   const actionSheetRef = useRef(null);
 
   const handleMenuPress = idx => {
+    console.log(idx);
     if (idx === 0) {
       handleLogOut();
+    } else if (idx === 1) {
+      handleResetPassword();
     }
   };
 
@@ -69,8 +73,9 @@ const Profile = ({
       <ActionSheet
         ref={actionSheetRef}
         title={'Options'}
-        options={['Sign Out', 'Cancel']}
-        cancelButtonIndex={1}
+        options={['Sign Out', 'Reset Password', 'Cancel']}
+        cancelButtonIndex={2}
+        destructiveButtonIndex={0}
         onPress={handleMenuPress}
       />
       <View style={styles.header}>
