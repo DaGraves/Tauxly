@@ -1,5 +1,13 @@
 import React, {useState} from 'react';
-import {Alert, Modal, SafeAreaView, ScrollView, StyleSheet} from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Modal,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {Button, Item, Text} from 'native-base';
 import {Input} from '../components';
 import {colors} from '../styles/common';
@@ -9,6 +17,7 @@ import auth from '@react-native-firebase/auth';
 
 const AccountDeletionModal = ({visible = false, closeModal = () => {}}) => {
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const triggerDeleteAlert = async () => {
     try {
@@ -48,7 +57,9 @@ const AccountDeletionModal = ({visible = false, closeModal = () => {}}) => {
   };
 
   const handleAccountDelete = async () => {
+    setLoading(true);
     await deleteAccountData();
+    setLoading(false);
   };
 
   return (
@@ -72,20 +83,26 @@ const AccountDeletionModal = ({visible = false, closeModal = () => {}}) => {
               iconName="lock"
             />
           </Item>
-          <Button
-            style={[buttonStyles.buttonPrimary, styles.button]}
-            onPress={closeModal}>
-            <Text style={buttonStyles.buttonPrimaryText}>
-              No, take me back!
-            </Text>
-          </Button>
-          <Button
-            style={[buttonStyles.buttonSecondary, styles.button]}
-            onPress={triggerDeleteAlert}>
-            <Text style={buttonStyles.buttonSecondaryText}>
-              Yes, delete my account
-            </Text>
-          </Button>
+          {loading ? (
+            <ActivityIndicator size={'large'} color={colors.white} />
+          ) : (
+            <>
+              <Button
+                style={[buttonStyles.buttonPrimary, styles.button]}
+                onPress={closeModal}>
+                <Text style={buttonStyles.buttonPrimaryText}>
+                  No, take me back!
+                </Text>
+              </Button>
+              <Button
+                style={[buttonStyles.buttonSecondary, styles.button]}
+                onPress={triggerDeleteAlert}>
+                <Text style={buttonStyles.buttonSecondaryText}>
+                  Yes, delete my account
+                </Text>
+              </Button>
+            </>
+          )}
         </ScrollView>
       </SafeAreaView>
     </Modal>
