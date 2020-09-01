@@ -1,4 +1,4 @@
-import React, {useContext, useRef} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 import {
   Linking,
   StyleSheet,
@@ -11,7 +11,7 @@ import {
 import {Toast} from 'native-base';
 import ImageCustom from './ImageCustom';
 import {DEFAULT_PROFILE_PICTURE} from '../constants';
-import {PictureFeed} from './index';
+import {AccountDeletionModal, PictureFeed} from './index';
 import {StoreContext} from '../store/StoreContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -34,15 +34,22 @@ const Profile = ({
   const myUser = useContext(StoreContext).user;
   const navigation = useNavigation();
   const user = otherUser || myUser;
+  const [
+    accountDeletionModalVisible,
+    setAccountDeletionModalVisible,
+  ] = useState(false);
 
   const actionSheetRef = useRef(null);
 
-  const handleMenuPress = idx => {
+  const handleMenuPress = async idx => {
     console.log(idx);
     if (idx === 0) {
       handleLogOut();
     } else if (idx === 1) {
       handleResetPassword();
+    } else if (idx === 2) {
+      setAccountDeletionModalVisible(true);
+      // await deleteAccountData(myUser.id);
     }
   };
 
@@ -70,11 +77,15 @@ const Profile = ({
 
   return (
     <>
+      <AccountDeletionModal
+        visible={accountDeletionModalVisible}
+        closeModal={() => setAccountDeletionModalVisible(false)}
+      />
       <ActionSheet
         ref={actionSheetRef}
         title={'Options'}
-        options={['Sign Out', 'Reset Password', 'Cancel']}
-        cancelButtonIndex={2}
+        options={['Sign Out', 'Reset Password', 'Delete Account', 'Cancel']}
+        cancelButtonIndex={3}
         destructiveButtonIndex={0}
         onPress={handleMenuPress}
       />

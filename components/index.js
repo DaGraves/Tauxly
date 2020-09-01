@@ -9,6 +9,7 @@ import ListDivider from './ListDivider';
 import GradientBackground from './GradientBackground';
 import LoadingOverlay from './LoadingOverlay';
 import LeaderboardPrizes from './LeaderboardPrizes';
+import AccountDeletionModal from './AccountDeletionModal';
 
 export {
   Image,
@@ -22,4 +23,5 @@ export {
   GradientBackground,
   LoadingOverlay,
   LeaderboardPrizes,
+  AccountDeletionModal,
 };
