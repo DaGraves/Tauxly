@@ -4,12 +4,26 @@ import LeaderboardItem from './LeaderboardItem';
 import moment from 'moment';
 import {colors} from '../styles/common';
 import CommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import firestore from '@react-native-firebase/firestore';
 
-const PRIZES = [150, 100, 50, 40, 30, 20, 10];
+const getFormattedPlace = key => {
+  const [first, second] = key.split('-');
+  if (!second) {
+    return moment.localeData().ordinal(parseInt(first, 0));
+  } else {
+    return `${moment
+      .localeData()
+      .ordinal(parseInt(first, 0))} - ${moment
+      .localeData()
+      .ordinal(parseInt(second, 0))}`;
+  }
+};
 
 const LeaderboardPrizes = ({posts}) => {
   const [showAll, setShowAll] = useState(false);
   const [secondsLeft, setSecondsLeft] = useState(0);
+  const [prizes, setPrizes] = useState([]);
+
   const postArray = Object.values(posts).slice(0, 7);
 
   const getSecondsLeft = () =>
@@ -22,14 +36,36 @@ const LeaderboardPrizes = ({posts}) => {
     setShowAll(!showAll);
   };
 
+  const fetchPrizes = async () => {
+    const data = await firestore()
+      .collection('prizes')
+      .get();
+
+    const initialPrizes = [];
+    data.docs.forEach(docRef => {
+      const doc = docRef.data();
+      const key = docRef.id;
+      if (doc.value) {
+        initialPrizes.push({key, ...doc});
+      }
+    });
+
+    const orderedPrizes = initialPrizes.sort((a, b) => {
+      const _a = parseInt(a.key.split('-')[0], 0);
+      const _b = parseInt(b.key.split('-')[0], 0);
+      return _a - _b;
+    });
+    setPrizes(orderedPrizes);
+  };
+
   useEffect(() => {
     setSecondsLeft(getSecondsLeft);
     const interval = setInterval(() => setSecondsLeft(getSecondsLeft), 1000);
-
+    fetchPrizes();
     return () => clearInterval(interval);
   }, []);
 
-  const shownPrizes = showAll ? PRIZES : PRIZES.slice(0, 3);
+  const shownPrizes = showAll ? prizes : prizes.slice(0, 3);
   return (
     <View style={styles.container}>
       <Text style={styles.countdown}>
@@ -42,34 +78,15 @@ const LeaderboardPrizes = ({posts}) => {
       {shownPrizes.map((item, idx) => {
         return (
           <LeaderboardItem
-            key={`place_${idx}`}
+            key={`place_${item.key}`}
             username={
               postArray[idx] ? `@${postArray[idx].username}` : 'per person'
             }
-            money={PRIZES[idx]}
-            place={moment.localeData().ordinal(idx + 1)}
+            money={item.value}
+            place={getFormattedPlace(item.key)}
           />
         );
       })}
-      {showAll && (
-        <>
-          <LeaderboardItem
-            username={'per person'}
-            place={'8th - 20th'}
-            money={5}
-          />
-          <LeaderboardItem
-            username={'per person'}
-            place={'20th - 50th'}
-            money={5}
-          />
-          <LeaderboardItem
-            username={'per person'}
-            place={'50th - 100th'}
-            money={5}
-          />
-        </>
-      )}
       <TouchableOpacity style={styles.viewContainer} onPress={toggleView}>
         <CommunityIcon
           name={showAll ? 'chevron-up' : 'chevron-down'}

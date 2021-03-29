@@ -1,7 +1,7 @@
 import React, {useCallback, useContext} from 'react';
 import {View, StyleSheet, Dimensions, TouchableOpacity} from 'react-native';
 import ImageCustom from './ImageCustom';
-import {Text, Button} from 'native-base';
+import {Text} from 'native-base';
 import {StoreContext} from '../store/StoreContext';
 import {useNavigation} from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
@@ -20,6 +20,7 @@ const FeedPost = props => {
     onUnlikeOptimisticUpdate,
     disableLike,
     disableUsername,
+    rank,
   } = props;
   const {user} = useContext(StoreContext);
 
@@ -108,6 +109,7 @@ const FeedPost = props => {
           resizeMode={'contain'}
           source={{uri: item.downloadUrl}}
         />
+        {rank ? <Text style={styles.rank}># {rank}</Text> : null}
       </View>
       <View style={styles.actionContainer}>
         {!disableUsername ? (
@@ -195,6 +197,17 @@ const styles = StyleSheet.create({
     color: colors.lightGrey,
     textAlign: 'center',
     marginTop: 20,
+  },
+  rank: {
+    color: colors.yellow,
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    fontSize: 30,
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 1,
   },
 });
 

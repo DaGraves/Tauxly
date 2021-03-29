@@ -75,6 +75,7 @@ const PictureFeed = props => {
             onUnlikeOptimisticUpdate={handleUnlikeOptimisticUpdate}
             disableLike={disableLike}
             disableUsername={disableUsername}
+            rank={item.index + 1}
           />
         )
       }
