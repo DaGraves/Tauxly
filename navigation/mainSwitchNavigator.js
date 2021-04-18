@@ -7,35 +7,76 @@ import AuthStackNavigator from './authStackNavigator';
 import {EmailVerificationScreen} from '../screens';
 import HeaderlessStackNavigator from './TablessStackNavigator';
 import RNIap from 'react-native-iap';
-import {Platform} from 'react-native';
+import {Alert, Platform} from 'react-native';
+
+const validateReceiptAndroid = async purchaseToken => {
+  try {
+    const data = await fetch(
+      'https://us-central1-taully.cloudfunctions.net/validateReceiptAndroid',
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({purchaseToken}),
+      },
+    );
+    return data;
+  } catch (e) {
+    return {isSuccessful: false};
+  }
+};
 
 const MainSwitchNavigator = () => {
   const {user, setUser, setCurrentPurchase} = useContext(StoreContext);
 
   useEffect(() => {
+    RNIap.consumeAllItemsAndroid();
     const purchaseListener = RNIap.purchaseUpdatedListener(async purchase => {
       try {
         //TODO: Change on production isTest
         const receiptBody = {'receipt-data': purchase.transactionReceipt};
-        const result = await RNIap.validateReceiptIos(receiptBody, true);
+        const result =
+          Platform.OS === 'ios'
+            ? await RNIap.validateReceiptIos(receiptBody, true)
+            : await validateReceiptAndroid(purchase.transactionReceipt);
 
-        // Status 0 means valid Apple Receipt
-        if (result.status === 0) {
+        // Status 0 means valid Apple Receipt, isSuccessful is for Android
+        if (
+          result.status === 0 ||
+          result.status === 200 ||
+          result.status === '200'
+        ) {
           if (Platform.OS === 'ios') {
             await RNIap.finishTransactionIOS(purchase.transactionId);
           } else if (Platform.OS === 'android') {
-            await RNIap.consumePurchaseAndroid(purchase.purchaseToken);
+            RNIap.consumeAllItemsAndroid();
           }
-          await RNIap.finishTransaction(purchase, true);
+          RNIap.finishTransaction(purchase, true);
           setCurrentPurchase({...purchase, isComplete: true});
+        } else {
+          Alert.alert(
+            'Something went wrong!',
+            'Please close the app and try again in a few minutes',
+          );
         }
       } catch (e) {
+        Alert.alert('Something went wrong!', e.message);
         console.log('Error in Listener', e);
       }
     });
 
     const purchaseErrorListener = RNIap.purchaseErrorListener(error => {
       console.log('PURCHASE ERROR', error);
+      Alert.alert(
+        'Something went wrong',
+        "We couldn't process your purchase.",
+        [
+          {
+            text: 'Ok',
+            style: 'cancel',
+          },
+        ],
+        {cancelable: false},
+      );
     });
 
     return () => {

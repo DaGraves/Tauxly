@@ -1,10 +1,9 @@
 import React, {useCallback, useContext, useState} from 'react';
-import {FlatList, View} from 'react-native';
+import {FlatList} from 'react-native';
 import {StoreContext} from '../store/StoreContext';
 import ListDivider from './ListDivider';
 import FeedPost from './FeedPost';
 import FeedPostSplit from './FeedPostSplit';
-import LeaderboardPrizes from './LeaderboardPrizes';
 
 // Receive posts in an object format
 const PictureFeed = props => {

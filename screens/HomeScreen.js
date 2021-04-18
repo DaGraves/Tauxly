@@ -19,6 +19,7 @@ import {StoreContext} from '../store/StoreContext';
 import ImagePicker from 'react-native-image-crop-picker';
 import {PictureFeed} from '../components';
 import {colors} from '../styles/common';
+import {Button} from 'native-base';
 
 const BATCH_SIZE = 10;
 
