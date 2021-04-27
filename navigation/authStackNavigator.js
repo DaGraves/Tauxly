@@ -1,10 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {
-  SignUpScreen,
-  LogInScreen,
-  TermsAndConditionsScreen,
-} from '../screens';
+import {SignUpScreen, LogInScreen, TermsAndConditionsScreen} from '../screens';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +19,7 @@ const AuthStackNavigator = props => {
       />
       <Stack.Screen
         name="TermsAndConditions"
+        options={{title: 'Terms and Conditions', headerBackTitle: 'Back'}}
         component={TermsAndConditionsScreen}
       />
     </Stack.Navigator>

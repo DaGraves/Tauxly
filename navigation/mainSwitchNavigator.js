@@ -8,6 +8,7 @@ import {EmailVerificationScreen} from '../screens';
 import HeaderlessStackNavigator from './TablessStackNavigator';
 import RNIap from 'react-native-iap';
 import {Alert, Platform} from 'react-native';
+import RNBootSplash from "react-native-bootsplash";
 
 const validateReceiptAndroid = async purchaseToken => {
   try {
@@ -137,6 +138,7 @@ const MainSwitchNavigator = () => {
         const localUser = await AsyncStorage.getItem('user');
         localUser && (await AsyncStorage.removeItem('user'));
       }
+      await RNBootSplash.hide();
     });
   }, []);
 

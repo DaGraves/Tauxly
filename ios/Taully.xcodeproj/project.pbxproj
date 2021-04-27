@@ -28,6 +28,7 @@
 		B3DAC1A680EFF7F0D421D2D4 /* libPods-Taully.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41F4A7A414AAA8BD3EB6E7CA /* libPods-Taully.a */; };
 		B4B1B0307F83417CBEC0B4A5 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 03E41449DB524785BEB41A81 /* FontAwesome.ttf */; };
 		C514B6FC24923A7D003232C2 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C514B6FB24923A7D003232C2 /* Media.xcassets */; };
+		C57351812638CCBC00A3F0DD /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C57351802638CCBC00A3F0DD /* BootSplash.storyboard */; };
 		C5AE19572499099E006C0A70 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C5AE19562499099E006C0A70 /* GoogleService-Info.plist */; };
 		C5AE195924990A56006C0A70 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C5AE195824990A56006C0A70 /* StoreKit.framework */; };
 		CF977F47E076492198BA706F /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92B62B03985341E5A8C9D1AF /* Zocial.ttf */; };
@@ -72,9 +73,11 @@
 		9D8B4D8213294909AFEEE53A /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		A8448B504716D3B95D36283F /* Pods-Taully-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Taully-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Taully-tvOSTests/Pods-Taully-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		C514B6FB24923A7D003232C2 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		C57351802638CCBC00A3F0DD /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = Taully/BootSplash.storyboard; sourceTree = "<group>"; };
 		C5AA10B02497905C00FEB4C7 /* libRNIap.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNIap.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		C5AE19562499099E006C0A70 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C5AE195824990A56006C0A70 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		C5BB5B582638C44800DB05FC /* libreact-native-splash-screen.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libreact-native-splash-screen.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CE195D9C8E0C254F83F174F4 /* libPods-Taully-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Taully-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E64411B6B9BEE83A75FCF325 /* Pods-Taully-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Taully-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Taully-tvOS/Pods-Taully-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		E72A6C5693844F91B13F82DB /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
@@ -141,6 +144,7 @@
 		13B07FAE1A68108700A75B9A /* Taully */ = {
 			isa = PBXGroup;
 			children = (
+				C57351802638CCBC00A3F0DD /* BootSplash.storyboard */,
 				C5AE19562499099E006C0A70 /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -180,6 +184,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C5BB5B582638C44800DB05FC /* libreact-native-splash-screen.a */,
 				C5AE195824990A56006C0A70 /* StoreKit.framework */,
 				C5AA10B02497905C00FEB4C7 /* libRNIap.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
@@ -317,6 +322,7 @@
 				6D012AD833E0468698A78BCE /* AntDesign.ttf in Resources */,
 				D566AFC7706B4160B9508C83 /* Entypo.ttf in Resources */,
 				EA6064CAFDF047C193D1B169 /* EvilIcons.ttf in Resources */,
+				C57351812638CCBC00A3F0DD /* BootSplash.storyboard in Resources */,
 				5DAF709368C44FC2982601AF /* Feather.ttf in Resources */,
 				C5AE19572499099E006C0A70 /* GoogleService-Info.plist in Resources */,
 				B4B1B0307F83417CBEC0B4A5 /* FontAwesome.ttf in Resources */,
@@ -701,6 +707,7 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNIap\"",
 					"\"${PODS_ROOT}/CocoaLibEvent/lib\"",
 					"\"${PODS_ROOT}/OpenSSL-Universal/ios/lib\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNBootSplash\"",
 					"$(inherited)",
 				);
 				OTHER_LDFLAGS = (
@@ -853,6 +860,7 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-safe-area-context\"",
 					"\"${PODS_ROOT}/CocoaLibEvent/lib\"",
 					"\"${PODS_ROOT}/OpenSSL-Universal/ios/lib\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/RNBootSplash\"",
 					"$(inherited)",
 				);
 				OTHER_LDFLAGS = (

@@ -34,7 +34,7 @@ const LeaderboardScreen = props => {
     let postsData = {};
 
     const startOfDay = moment(leaderboardDate)
-      .add(-leaderboardDate.getTimezoneOffset(), 'minutes')
+      // .add(-leaderboardDate.getTimezoneOffset(), 'minutes')
       .utc()
       .startOf('day')
       .unix();
