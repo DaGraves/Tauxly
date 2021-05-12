@@ -17,7 +17,8 @@ const ImageCustom = props => {
     <>
       <Image
         {...props}
-        source={{uri: __DEV__ ? DEV_URL : props.source.uri}}
+        // source={{uri: __DEV__ ? DEV_URL : props.source.uri}}
+        source={{uri: props.source.uri}}
         onLoadStart={handleLoadStart}
         onLoadEnd={handleLoadEnd}
       />

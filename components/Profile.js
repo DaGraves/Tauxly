@@ -96,51 +96,49 @@ const Profile = ({
             style={styles.image}
           />
           {otherUser &&
-            (otherUser.facebook ||
-              otherUser.instagram ||
-              otherUser.twitter) && (
-              <View>
-                <View style={styles.divider} />
-                <View style={styles.socialContainer}>
-                  {otherUser.facebook ? (
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleSocialPress('facebook', otherUser.facebook)
-                      }>
-                      <CommunityIcon
-                        name="facebook"
-                        color={colors.white}
-                        size={24}
-                      />
-                    </TouchableOpacity>
-                  ) : null}
-                  {otherUser.instagram ? (
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleSocialPress('instagram', otherUser.instagram)
-                      }>
-                      <CommunityIcon
-                        name="instagram"
-                        color={colors.white}
-                        size={24}
-                      />
-                    </TouchableOpacity>
-                  ) : null}
-                  {otherUser.twitter ? (
-                    <TouchableOpacity
-                      onPress={() =>
-                        handleSocialPress('twitter', otherUser.twitter)
-                      }>
-                      <CommunityIcon
-                        name="twitter"
-                        color={colors.white}
-                        size={24}
-                      />
-                    </TouchableOpacity>
-                  ) : null}
-                </View>
+          (otherUser.facebook || otherUser.instagram || otherUser.twitter) ? (
+            <View>
+              <View style={styles.divider} />
+              <View style={styles.socialContainer}>
+                {otherUser.facebook ? (
+                  <TouchableOpacity
+                    onPress={() =>
+                      handleSocialPress('facebook', otherUser.facebook)
+                    }>
+                    <CommunityIcon
+                      name="facebook"
+                      color={colors.white}
+                      size={24}
+                    />
+                  </TouchableOpacity>
+                ) : null}
+                {otherUser.instagram ? (
+                  <TouchableOpacity
+                    onPress={() =>
+                      handleSocialPress('instagram', otherUser.instagram)
+                    }>
+                    <CommunityIcon
+                      name="instagram"
+                      color={colors.white}
+                      size={24}
+                    />
+                  </TouchableOpacity>
+                ) : null}
+                {otherUser.twitter ? (
+                  <TouchableOpacity
+                    onPress={() =>
+                      handleSocialPress('twitter', otherUser.twitter)
+                    }>
+                    <CommunityIcon
+                      name="twitter"
+                      color={colors.white}
+                      size={24}
+                    />
+                  </TouchableOpacity>
+                ) : null}
               </View>
-            )}
+            </View>
+          ) : null}
         </View>
         <View style={styles.headerRight}>
           <View style={styles.usernameContainer}>
