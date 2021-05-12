@@ -58,31 +58,35 @@ const AddPostDetailsScreen = props => {
   );
 
   const uploadPost = useCallback(async () => {
-    const pictureId = uuid();
-    const storageRef = storage().ref(`posts/${pictureId}`);
-    await storageRef.putFile(params.path);
-    const downloadUrl = await storageRef.getDownloadURL();
-    const dbData = {
-      pictureId,
-      downloadUrl,
-      description,
-      likeCount: 0,
-      userId: user && user.id,
-      username: user && user.username,
-      createdAt: moment().unix(),
-      createdAtDay: moment()
-        .utc()
-        .startOf('day')
-        .unix(),
-      aspectRatio: params.width / params.height,
-    };
-    await firestore()
-      .collection('posts')
-      .add(dbData);
+    try {
+      const pictureId = uuid();
+      const storageRef = storage().ref(`posts/${pictureId}`);
+      await storageRef.putFile(params.path);
+      const downloadUrl = await storageRef.getDownloadURL();
+      const dbData = {
+        pictureId,
+        downloadUrl,
+        description,
+        likeCount: 0,
+        userId: user && user.id,
+        username: user && user.username,
+        createdAt: moment().unix(),
+        createdAtDay: moment()
+          .utc()
+          .startOf('day')
+          .unix(),
+        aspectRatio: params.width / params.height,
+      };
+      await firestore()
+        .collection('posts')
+        .add(dbData);
 
-    setIsLoading(false);
-    setCurrentPurchase({});
-    navigation.goBack();
+      setIsLoading(false);
+      setCurrentPurchase({});
+      navigation.goBack();
+    } catch (e) {
+      console.log('Upload Error', e);
+    }
   }, [
     description,
     navigation,

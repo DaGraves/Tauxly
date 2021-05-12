@@ -8,7 +8,7 @@ import {EmailVerificationScreen} from '../screens';
 import HeaderlessStackNavigator from './TablessStackNavigator';
 import RNIap from 'react-native-iap';
 import {Alert, Platform} from 'react-native';
-import RNBootSplash from "react-native-bootsplash";
+import RNBootSplash from 'react-native-bootsplash';
 
 const validateReceiptAndroid = async purchaseToken => {
   try {
@@ -35,16 +35,21 @@ const MainSwitchNavigator = () => {
       try {
         //TODO: Change on production isTest
         const receiptBody = {'receipt-data': purchase.transactionReceipt};
-        const result =
-          Platform.OS === 'ios'
-            ? await RNIap.validateReceiptIos(receiptBody, true)
-            : await validateReceiptAndroid(purchase.transactionReceipt);
-
+        let result;
+        if (Platform.OS === 'ios') {
+          result = await RNIap.validateReceiptIos(receiptBody, false);
+          if (result.status === 21007) {
+            result = await RNIap.validateReceiptIos(receiptBody, true);
+          }
+        } else {
+          result = await validateReceiptAndroid(purchase.transactionReceipt);
+        }
         // Status 0 means valid Apple Receipt, isSuccessful is for Android
         if (
-          result.status === 0 ||
-          result.status === 200 ||
-          result.status === '200'
+          result &&
+          (result.status === 0 ||
+            result.status === 200 ||
+            result.status === '200')
         ) {
           if (Platform.OS === 'ios') {
             await RNIap.finishTransactionIOS(purchase.transactionId);
@@ -84,7 +89,7 @@ const MainSwitchNavigator = () => {
       purchaseErrorListener.remove();
       purchaseListener.remove();
     };
-  }, [setCurrentPurchase]);
+  }, []);
 
   useEffect(() => {
     auth().onAuthStateChanged(async data => {

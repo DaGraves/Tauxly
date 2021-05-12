@@ -1,21 +1,13 @@
-import React, {useCallback, useState} from 'react';
-import {StoreContext, DEFAULT_STATE} from './StoreContext';
+import React, {useState} from 'react';
+import {StoreContext} from './StoreContext';
 
 const Provider = ({children}) => {
-  const [state, setState] = useState(DEFAULT_STATE);
-  const setUser = useCallback(
-    newUser => {
-      setState({...state, user: newUser});
-    },
-    [state],
-  );
-  const setCurrentPurchase = useCallback(
-    newPurchase => setState({...state, currentPurchase: newPurchase}),
-    [state],
-  );
+  const [user, setUser] = useState(null);
+  const [currentPurchase, setCurrentPurchase] = useState({});
 
   return (
-    <StoreContext.Provider value={{...state, setUser, setCurrentPurchase}}>
+    <StoreContext.Provider
+      value={{user, currentPurchase, setUser, setCurrentPurchase}}>
       {children}
     </StoreContext.Provider>
   );
