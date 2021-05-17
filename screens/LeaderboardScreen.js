@@ -45,10 +45,10 @@ const LeaderboardScreen = props => {
         .collection('posts')
         .where('createdAtDay', '==', startOfDay)
         .orderBy('likeCount', 'desc')
+        .orderBy('createdAt', 'asc')
         .startAfter(lastDocRef.current)
         .limit(BATCH_SIZE)
         .get();
-
       if (!data.empty) {
         data.docs.forEach((docRef, idx) => {
           const doc = docRef.data();
@@ -119,6 +119,7 @@ const LeaderboardScreen = props => {
           fetchPosts={fetchPosts}
           batchSize={BATCH_SIZE}
           HeaderComponent={LeaderboardPrizes}
+          enableRanking
         />
       </SafeAreaView>
     </View>

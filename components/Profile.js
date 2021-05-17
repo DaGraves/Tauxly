@@ -30,6 +30,7 @@ const Profile = ({
   batchSize,
   otherUser,
   loading,
+  disableLike,
 }) => {
   const myUser = useContext(StoreContext).user;
   const navigation = useNavigation();
@@ -73,7 +74,8 @@ const Profile = ({
     }
   };
 
-  const handlePostPress = id => navigation.navigate('Post', {id});
+  const handlePostPress = id =>
+    navigation.navigate('Post', {id, disableLike: true});
 
   return (
     <>
@@ -186,7 +188,7 @@ const Profile = ({
           extraPosts={extraPosts}
           setPosts={setPosts}
           fetchPosts={fetchPosts}
-          disableLike
+          disableLike={true}
           disableUsername
           batchSize={batchSize}
           isSplit

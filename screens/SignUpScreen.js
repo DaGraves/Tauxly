@@ -44,7 +44,7 @@ const PICKER_ITEMS = ['Camera', 'Gallery', 'Cancel'];
 
 const SignUpScreen = () => {
   const navigation = useNavigation();
-  const {user, setUser} = useContext(StoreContext);
+  const {setUser} = useContext(StoreContext);
   const actionSheetRef = useRef(null);
   const [state, setState] = useState(DEFAULT_STATE);
   const [errors, setErrors] = useState({});
@@ -67,9 +67,6 @@ const SignUpScreen = () => {
     let newErrors = {};
     if (!VALIDATIONS.email(email)) {
       newErrors.email = 'Email address not valid!';
-    }
-    if (!VALIDATIONS.paypalEmail(paypalEmail)) {
-      newErrors.paypalEmail = 'Paypal email address not valid!';
     }
     if (password !== passwordConfirm) {
       newErrors.passwordConfirm = 'The passwords do not match!';
@@ -211,7 +208,6 @@ const SignUpScreen = () => {
                   onChangeText={val => onChange('paypalEmail', val)}
                   iconName="attach-money"
                   maxLength={255}
-                  error={errors.paypalEmail}
                 />
               </Item>
               <Item style={inputStyles.item}>
@@ -308,6 +304,11 @@ const SignUpScreen = () => {
                 See the Terms and Conditions!
               </Text>
             </TouchableOpacity>
+            {!state.paypalEmail ? (
+              <Text style={{fontSize: 14, color: colors.white}}>
+                * PayPal email is needed if you want to receive your rewards
+              </Text>
+            ) : null}
           </View>
         </KeyboardAwareScrollView>
       </SafeAreaView>

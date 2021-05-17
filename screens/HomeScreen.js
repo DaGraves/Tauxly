@@ -48,7 +48,7 @@ const HomeScreen = () => {
           .collection('posts')
           .where('createdAt', '>=', startOfDay)
           .where('createdAt', '<=', endOfDay)
-          .orderBy('createdAt', 'desc')
+          .orderBy('createdAt', 'asc')
           .startAfter(lastDocRef.current)
           .limit(BATCH_SIZE)
           .get();
@@ -75,7 +75,7 @@ const HomeScreen = () => {
           .collection('posts')
           .where('createdAt', '>=', startOfDay)
           .where('createdAt', '<=', endOfDay)
-          .orderBy('createdAt', 'desc')
+          .orderBy('createdAt', 'asc')
           .limit(BATCH_SIZE)
           .get();
 

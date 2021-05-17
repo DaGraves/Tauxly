@@ -118,26 +118,24 @@ const FeedPost = props => {
             onPress={() =>
               navigation.navigate('OtherProfile', {userId: item.userId})
             }>
-            <Text style={[styles.username, !showLikes && styles.onlyUserName]}>
-              @{item.username}
-            </Text>
+            <Text style={styles.username}>@{item.username}</Text>
           </TouchableOpacity>
         ) : null}
-        {showLikes ? (
-          <TouchableOpacity
-            style={styles.likeContainer}
-            onPress={isLiked ? handleUnlike : handleLike}>
+        <TouchableOpacity
+          style={styles.likeContainer}
+          onPress={isLiked ? handleUnlike : handleLike}
+          disabled={!showLikes}>
+          {showLikes ? (
             <CommunityIcon
               size={20}
               color={isLiked ? colors.yellow : colors.white}
               name={isLiked ? 'thumb-up' : 'thumb-up-outline'}
             />
-            <Text
-              style={[styles.likes, isLiked ? styles.liked : styles.unliked]}>
-              {item.likeCount || 0} likes
-            </Text>
-          </TouchableOpacity>
-        ) : null}
+          ) : null}
+          <Text style={[styles.likes, isLiked ? styles.liked : styles.unliked]}>
+            {item.likeCount || 0} likes
+          </Text>
+        </TouchableOpacity>
       </View>
       <Text style={styles.description}>{item.description}</Text>
       <TouchableOpacity onPress={handleComments}>
@@ -151,18 +149,20 @@ const styles = StyleSheet.create({
   actionContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    flex: 1,
     marginVertical: 10,
   },
   likeContainer: {
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingLeft: 20,
     flex: 1 / 2,
   },
   likes: {
-    textAlign: 'left',
     fontSize: 14,
     marginLeft: 4,
+    textAlign: 'center',
     fontWeight: 'bold',
   },
   liked: {
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   username: {
     color: colors.white,
     paddingRight: 20,
-    textAlign: 'right',
+    textAlign: 'center',
     fontWeight: 'bold',
   },
   onlyUserName: {

@@ -7,9 +7,10 @@ import {FeedPost} from '../components';
 
 const PostScreen = props => {
   const postId = props.route.params.id;
+  const disableLike = props.route.params.disableLike;
   const navigation = useNavigation();
   const [data, setData] = useState(null);
-
+console.log('>>>>>>>>>>>', disableLike, props.route.params)
   const fetchPost = async () => {
     const docRef = await firestore()
       .collection('posts')
@@ -29,7 +30,7 @@ const PostScreen = props => {
 
   return (
     <ScrollView style={styles.baseline}>
-      {data && <FeedPost item={data} />}
+      {data && <FeedPost item={data} disableLike={disableLike} />}
     </ScrollView>
   );
 };

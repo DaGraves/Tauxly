@@ -18,7 +18,9 @@ const PictureFeed = props => {
     isSplit = false,
     onPostPress,
     HeaderComponent,
+    enableRanking,
   } = props;
+
   const {user} = useContext(StoreContext);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -74,7 +76,7 @@ const PictureFeed = props => {
             onUnlikeOptimisticUpdate={handleUnlikeOptimisticUpdate}
             disableLike={disableLike}
             disableUsername={disableUsername}
-            rank={item.index + 1}
+            rank={enableRanking ? item.index + 1 : null}
           />
         )
       }
