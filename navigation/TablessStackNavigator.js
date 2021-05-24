@@ -10,6 +10,7 @@ import {
 import BottomTabNavigator from './bottomTabNavigator';
 import {colors} from '../styles/common';
 import RNIap from 'react-native-iap';
+import RulesScreen from '../screens/RulesScreen';
 
 const Stack = createStackNavigator();
 
@@ -62,6 +63,11 @@ const TablessStackNavigator = props => {
         name="Post"
         component={PostScreen}
         options={{title: 'Post', headerBackTitle: 'Back'}}
+      />
+      <Stack.Screen
+        name="Rules"
+        component={RulesScreen}
+        options={{title: 'Contest Rules', headerBackTitle: 'Back'}}
       />
     </Stack.Navigator>
   );

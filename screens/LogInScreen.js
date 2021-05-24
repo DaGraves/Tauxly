@@ -159,6 +159,11 @@ const LogInScreen = props => {
                 Don't have an account?
               </Text>
             </Button>
+            <Text
+              style={styles.rulesLink}
+              onPress={() => navigation.navigate('Rules')}>
+              Press to see the Contest Rules
+            </Text>
           </View>
         </KeyboardAwareScrollView>
       </SafeAreaView>
@@ -196,7 +201,12 @@ const styles = StyleSheet.create({
     color: colors.yellow,
     textAlign: 'center',
     fontSize: 14,
-    marginTop: 10
+    marginTop: 10,
+  },
+  rulesLink: {
+    color: colors.white,
+    textAlign: 'center',
+    marginTop: 30,
   },
 });
 

@@ -43,14 +43,14 @@ const Profile = ({
   const actionSheetRef = useRef(null);
 
   const handleMenuPress = async idx => {
-    console.log(idx);
     if (idx === 0) {
       handleLogOut();
     } else if (idx === 1) {
       handleResetPassword();
     } else if (idx === 2) {
       setAccountDeletionModalVisible(true);
-      // await deleteAccountData(myUser.id);
+    } else if (idx === 3) {
+      navigation.navigate('Rules');
     }
   };
 
@@ -86,8 +86,14 @@ const Profile = ({
       <ActionSheet
         ref={actionSheetRef}
         title={'Options'}
-        options={['Sign Out', 'Reset Password', 'Delete Account', 'Cancel']}
-        cancelButtonIndex={3}
+        options={[
+          'Sign Out',
+          'Reset Password',
+          'Delete Account',
+          'View Rules',
+          'Cancel',
+        ]}
+        cancelButtonIndex={4}
         destructiveButtonIndex={0}
         onPress={handleMenuPress}
       />
