@@ -56,12 +56,13 @@ const HomeScreen = () => {
         if (!data.empty) {
           data.docs.forEach((docRef, idx) => {
             const doc = docRef.data();
-            if (doc.userId !== user.id) {
-              postsData = {
-                ...postsData,
-                [docRef.id]: {...doc, id: docRef.id},
-              };
-            }
+            // Leave it in if you want to omit your own posts on the home screen
+            // if (doc.userId !== user.id) {
+            postsData = {
+              //     ...postsData,
+              [docRef.id]: {...doc, id: docRef.id},
+            };
+            // }
             if (idx === data.docs.length - 1) {
               lastDocRef.current = docRef;
             }
@@ -80,13 +81,14 @@ const HomeScreen = () => {
           .get();
 
         data.docs.forEach((docRef, idx) => {
+          // Leave it in if you want to omit your own posts on the home screen
           const doc = docRef.data();
-          if (doc.userId !== user.id) {
-            postsData = {
-              ...postsData,
-              [docRef.id]: {...doc, id: docRef.id},
-            };
-          }
+          // if (doc.userId !== user.id) {
+          postsData = {
+            //     ...postsData,
+            [docRef.id]: {...doc, id: docRef.id},
+          };
+          // }
           if (idx === data.docs.length - 1) {
             lastDocRef.current = docRef;
           }
