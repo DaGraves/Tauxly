@@ -30,26 +30,49 @@ const LeaderboardScreen = props => {
     [leaderboardDate],
   );
 
-  const fetchPosts = useCallback(async () => {
-    let postsData = {};
+  const fetchPosts = useCallback(
+    async (forceRefresh = false) => {
+      let postsData = {};
 
-    const startOfDay = moment(leaderboardDate)
-      // .add(-leaderboardDate.getTimezoneOffset(), 'minutes')
-      .utc()
-      .startOf('day')
-      .unix();
+      const startOfDay = moment(leaderboardDate)
+        // .add(-leaderboardDate.getTimezoneOffset(), 'minutes')
+        .utc()
+        .startOf('day')
+        .unix();
 
-    if (lastDocRef.current) {
-      // The subsequent dynamic fetches
-      const data = await firestore()
-        .collection('posts')
-        .where('createdAtDay', '==', startOfDay)
-        .orderBy('likeCount', 'desc')
-        .orderBy('createdAt', 'asc')
-        .startAfter(lastDocRef.current)
-        .limit(BATCH_SIZE)
-        .get();
-      if (!data.empty) {
+      if (lastDocRef.current && !forceRefresh) {
+        // The subsequent dynamic fetches
+        const data = await firestore()
+          .collection('posts')
+          .where('createdAtDay', '==', startOfDay)
+          .orderBy('likeCount', 'desc')
+          .orderBy('createdAt', 'asc')
+          .startAfter(lastDocRef.current)
+          .limit(BATCH_SIZE)
+          .get();
+        if (!data.empty) {
+          data.docs.forEach((docRef, idx) => {
+            const doc = docRef.data();
+            postsData = {
+              ...postsData,
+              [docRef.id]: {...doc, id: docRef.id},
+            };
+            if (idx === data.docs.length - 1) {
+              lastDocRef.current = docRef;
+            }
+          });
+          setPosts({...posts, ...postsData});
+          setExtraPosts(postsData);
+        }
+      } else {
+        // The initial fetch
+        const data = await firestore()
+          .collection('posts')
+          .where('createdAtDay', '==', startOfDay)
+          .orderBy('likeCount', 'desc')
+          .limit(BATCH_SIZE)
+          .get();
+
         data.docs.forEach((docRef, idx) => {
           const doc = docRef.data();
           postsData = {
@@ -60,33 +83,13 @@ const LeaderboardScreen = props => {
             lastDocRef.current = docRef;
           }
         });
-        setPosts({...posts, ...postsData});
+
+        setPosts(postsData);
         setExtraPosts(postsData);
       }
-    } else {
-      // The initial fetch
-      const data = await firestore()
-        .collection('posts')
-        .where('createdAtDay', '==', startOfDay)
-        .orderBy('likeCount', 'desc')
-        .limit(BATCH_SIZE)
-        .get();
-
-      data.docs.forEach((docRef, idx) => {
-        const doc = docRef.data();
-        postsData = {
-          ...postsData,
-          [docRef.id]: {...doc, id: docRef.id},
-        };
-        if (idx === data.docs.length - 1) {
-          lastDocRef.current = docRef;
-        }
-      });
-
-      setPosts(postsData);
-      setExtraPosts(postsData);
-    }
-  }, [leaderboardDate, posts]);
+    },
+    [leaderboardDate, posts],
+  );
 
   useEffect(() => {
     fetchPosts();

@@ -26,7 +26,7 @@ const PictureFeed = props => {
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await fetchPosts();
+    await fetchPosts(true);
     setRefreshing(false);
   }, [fetchPosts]);
 
@@ -58,7 +58,7 @@ const PictureFeed = props => {
       onRefresh={handleRefresh}
       refreshing={refreshing}
       ItemSeparatorComponent={ListDivider}
-      onEndReached={fetchPosts}
+      onEndReached={() => fetchPosts(false)}
       onEndReachedThreshold={0.1}
       initialNumToRender={batchSize}
       numColumns={isSplit ? 2 : 1}

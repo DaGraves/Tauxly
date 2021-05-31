@@ -19,7 +19,6 @@ import {StoreContext} from '../store/StoreContext';
 import ImagePicker from 'react-native-image-crop-picker';
 import {PictureFeed} from '../components';
 import {colors} from '../styles/common';
-import {Button} from 'native-base';
 
 const BATCH_SIZE = 10;
 
@@ -30,36 +29,62 @@ const HomeScreen = () => {
   const lastDocRef = useRef(null);
   const {user} = useContext(StoreContext);
 
-  const fetchPosts = useCallback(async () => {
-    let postsData = {};
-    const startOfDay = moment()
-      .utc()
-      .startOf('day')
-      .unix();
-    const endOfDay = moment()
-      .utc()
-      .endOf('day')
-      .unix();
+  const fetchPosts = useCallback(
+    async (forceRefresh = false) => {
+      let postsData = {};
+      const startOfDay = moment()
+        .utc()
+        .startOf('day')
+        .unix();
+      const endOfDay = moment()
+        .utc()
+        .endOf('day')
+        .unix();
 
-    try {
-      if (lastDocRef.current) {
-        // Subsequent, paginated fetches
-        const data = await firestore()
-          .collection('posts')
-          .where('createdAt', '>=', startOfDay)
-          .where('createdAt', '<=', endOfDay)
-          .orderBy('createdAt', 'asc')
-          .startAfter(lastDocRef.current)
-          .limit(BATCH_SIZE)
-          .get();
+      try {
+        if (lastDocRef.current && !forceRefresh) {
+          // Subsequent, paginated fetches
+          const data = await firestore()
+            .collection('posts')
+            .where('createdAt', '>=', startOfDay)
+            .where('createdAt', '<=', endOfDay)
+            .orderBy('createdAt', 'desc')
+            .startAfter(lastDocRef.current)
+            .limit(BATCH_SIZE)
+            .get();
 
-        if (!data.empty) {
+          if (!data.empty) {
+            data.docs.forEach((docRef, idx) => {
+              const doc = docRef.data();
+              // Leave it in if you want to omit your own posts on the home screen
+              // if (doc.userId !== user.id) {
+              postsData = {
+                ...postsData,
+                [docRef.id]: {...doc, id: docRef.id},
+              };
+              // }
+              if (idx === data.docs.length - 1) {
+                lastDocRef.current = docRef;
+              }
+            });
+            setPosts({...posts, ...postsData});
+            setExtraPosts(postsData);
+          }
+        } else {
+          // The initial fetch
+          const data = await firestore()
+            .collection('posts')
+            .where('createdAt', '>=', startOfDay)
+            .where('createdAt', '<=', endOfDay)
+            .orderBy('createdAt', 'desc')
+            .limit(BATCH_SIZE)
+            .get();
           data.docs.forEach((docRef, idx) => {
-            const doc = docRef.data();
             // Leave it in if you want to omit your own posts on the home screen
+            const doc = docRef.data();
             // if (doc.userId !== user.id) {
             postsData = {
-              //     ...postsData,
+              ...postsData,
               [docRef.id]: {...doc, id: docRef.id},
             };
             // }
@@ -67,50 +92,26 @@ const HomeScreen = () => {
               lastDocRef.current = docRef;
             }
           });
-          setPosts({...posts, ...postsData});
-          setExtraPosts(postsData);
+          setPosts(postsData);
+          setLoading(false);
         }
-      } else {
-        // The initial fetch
-        const data = await firestore()
-          .collection('posts')
-          .where('createdAt', '>=', startOfDay)
-          .where('createdAt', '<=', endOfDay)
-          .orderBy('createdAt', 'asc')
-          .limit(BATCH_SIZE)
-          .get();
-
-        data.docs.forEach((docRef, idx) => {
-          // Leave it in if you want to omit your own posts on the home screen
-          const doc = docRef.data();
-          // if (doc.userId !== user.id) {
-          postsData = {
-            //     ...postsData,
-            [docRef.id]: {...doc, id: docRef.id},
-          };
-          // }
-          if (idx === data.docs.length - 1) {
-            lastDocRef.current = docRef;
-          }
-        });
-        setPosts(postsData);
-        setLoading(false);
+      } catch (e) {
+        Alert.alert(
+          'Something went wrong',
+          "We couldn't fetch any posts at this time...",
+          [
+            {
+              text: 'Ok',
+              style: 'cancel',
+            },
+          ],
+          {cancelable: false},
+        );
+        console.log('Login Error', e);
       }
-    } catch (e) {
-      Alert.alert(
-        'Something went wrong',
-        "We couldn't fetch any posts at this time...",
-        [
-          {
-            text: 'Ok',
-            style: 'cancel',
-          },
-        ],
-        {cancelable: false},
-      );
-      console.log('Login Error', e);
-    }
-  }, [posts, user.id]);
+    },
+    [posts, user.id],
+  );
 
   const cleanImagePicker = useCallback(async () => {
     try {
