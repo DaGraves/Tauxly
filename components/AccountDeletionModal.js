@@ -69,7 +69,7 @@ const AccountDeletionModal = ({visible = false, closeModal = () => {}}) => {
           <Text style={styles.explainTitle}>Are you sure?</Text>
           <Text style={styles.explain}>
             By deleting your account, you will permanently loose all the data
-            you shared with Tauxlly, including posts, comments, likes, bios and
+            you shared with Tauxly, including posts, comments, likes, bios and
             many more.
           </Text>
           <Item style={inputStyles.item}>

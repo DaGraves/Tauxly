@@ -90,9 +90,6 @@ const EditProfileScreen = props => {
       }
 
       let newErrors = {};
-      if (!VALIDATIONS.paypalEmail(paypal)) {
-        newErrors.paypalEmail = 'This email is not valid!';
-      }
 
       if (Object.keys(newErrors).length) {
         setErrors(newErrors);
@@ -167,7 +164,6 @@ const EditProfileScreen = props => {
               onChangeText={setPaypal}
               iconName="attach-money"
               maxLength={100}
-              error={errors.paypalEmail}
             />
           </Item>
           <Item style={[inputStyles.item, styles.bioInput]}>

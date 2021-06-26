@@ -33,7 +33,7 @@ const EmailVerificationScreen = props => {
             resizeMode={'contain'}
           />
           <Text style={styles.text}>
-            Please confirm your email and proceed to log in!
+            Email has been sent. Go to your email to confirm sign up to login.
           </Text>
           <Icon color={colors.yellow} name={'check'} size={200} />
         </View>

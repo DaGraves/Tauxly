@@ -154,7 +154,7 @@ const SignUpScreen = () => {
           <View>
             <Text style={styles.title}>
               Create a new{' '}
-              <Text style={[styles.title, styles.yellowColor]}>Tauxlly</Text>{' '}
+              <Text style={[styles.title, styles.yellowColor]}>Tauxly</Text>{' '}
               account!
             </Text>
             <TouchableOpacity
