@@ -18,16 +18,15 @@ const RulesScreen = props => {
             count wins that day. At the end of the contest day, everything gets
             reset and you can submit other entries for next day’s contest. Note
             that in any given day you are free to submit as many pictures as you
-            like.
+            like. In order to check past winners, click on the date on the
+            leaderboard page and choose the date you’d like to see.
           </Text>
 
           <Text style={styles.rule}>1. No nudity or adult content</Text>
           <Text style={styles.rule}>
             2. Violating posts will be taken down and no refund
           </Text>
-          <Text style={styles.rule}>
-            3. Users must be 17+ to enter contest
-          </Text>
+          <Text style={styles.rule}>3. Users must be 17+ to enter contest</Text>
           <Text style={styles.rule}>
             4. 99 cents (USD) per contest entry (unlimited entries per contest)
           </Text>
